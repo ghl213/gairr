@@ -1,5 +1,7 @@
 <!-- GAIRR（概尔工栈）开源版 README：SEO 增强版，中英关键词覆盖 AI agent / automation / skills / plugins / CLI 等检索入口 -->
 
+** 由于文件较大，请使用  git clone https://github.com/ghl213/gairr.git 方式下载 **
+
 # GAIRR — 本地优先的 AI 开发助手（Local-First AI Development Agent）
 
 **GAIRR（概尔工栈）** 是运行在 Windows 上的桌面级 AI 开发 Agent：以自然语言驱动**代码检索 → 修改 → 编译验证 → 结果总结**的全流程，帮你把"查代码、改代码、跑通构建"从手动操作变成一句话任务。本地优先（Local-First），可离线的桌面端 + Agent 引擎 + 匿名使用统计服务。
