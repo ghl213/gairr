@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>用量与配额 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-12</span><span class="sep">/</span><b>用量与配额报表</b></div>
+ <div class="grow"></div>
+ <select class="select" style="width:120px"><option>2026-09</option><option>2026-08</option><option>2026-07</option></select>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">运营域 · 成本与配额</div>
+ <h1 class="h1 mt-2">用量与配额报表</h1>
+ <p class="page-desc">按租户 / Agent / 用户 / 模型四个维度统计 Token 消耗与折算成本，并管理配额上限与预警阈值。超配额调用默认拒绝，可配置为降级到低成本模型。</p>
+ </div>
+ <div class="page-actions">
+ <div class="seg" data-seg><button class="is-on">按租户</button><button>按 Agent</button><button>按用户</button><button>按模型</button></div>
+ <button class="btn btn-primary" data-ico="download" data-demo="导出 CSV">导出 CSV</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="grid g-4 mb-5">
+ <div class="kpi"><span class="kpi-label">本月 Token</span><span class="kpi-value">412.8<small>M</small></span><span class="kpi-foot"><span class="delta up">▲ 12.4%</span> 环比上月</span></div>
+ <div class="kpi"><span class="kpi-label">折算成本</span><span class="kpi-value">¥18,420</span><span class="kpi-foot">其中推理占 <span class="delta flat">78%</span></span></div>
+ <div class="kpi is-warn"><span class="kpi-label">逼近配额</span><span class="kpi-value">3<small>个租户</small></span><span class="kpi-foot">使用率 &gt; 80%</span></div>
+ <div class="kpi is-danger"><span class="kpi-label">已超配额</span><span class="kpi-value">1<small>个租户</small></span><span class="kpi-foot">调用已按策略拒绝</span></div>
+ </div>
+
+ <div class="grid g-2-1 mb-5">
+ <div class="card">
+ <div class="card-head"><span class="card-title">近 30 天消耗趋势</span><span class="card-sub">单位：百万 Token</span><span class="rule" style="flex:1;height:1px;background:var(--line-2)"></span><span class="tag tag-brand">峰值 08-27 · 21.4M</span></div>
+ <div class="card-body">
+ <div class="trend">
+ <i style="height:38%"></i><i style="height:44%"></i><i style="height:41%"></i><i style="height:52%"></i><i style="height:47%"></i>
+ <i style="height:58%"></i><i style="height:36%"></i><i style="height:49%"></i><i style="height:61%"></i><i style="height:55%"></i>
+ <i style="height:66%"></i><i style="height:70%"></i><i style="height:52%"></i><i style="height:74%"></i><i style="height:68%"></i>
+ <i style="height:79%"></i><i style="height:83%"></i><i style="height:71%"></i><i style="height:88%"></i><i style="height:92%"></i>
+ <i style="height:76%"></i><i style="height:81%"></i><i style="height:95%"></i><i class="hi" style="height:100%"></i><i style="height:73%"></i>
+ <i style="height:69%"></i><i style="height:84%"></i><i style="height:77%"></i><i style="height:88%"></i><i style="height:91%"></i>
+ </div>
+ <div class="trend-axis"><span>08-13</span><span>08-20</span><span>08-27</span><span>09-03</span><span>09-11</span></div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title">配额总览</span></div>
+ <div class="card-body">
+ <div class="row gap-5 wrap">
+ <div class="gauge warn">
+ <svg width="120" height="120" viewBox="0 0 120 120">
+ <circle class="track" cx="60" cy="60" r="50"></circle>
+ <circle class="val" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="63"></circle>
+ </svg>
+ <div class="gauge-mid"><div class="gauge-num">80%</div><div class="gauge-cap">平台总配额</div></div>
+ </div>
+ <div class="grow">
+ <div class="bars">
+ <div class="bar-row"><span>华东制造</span><span class="bar-track"><span class="bar-fill danger" style="width:96%"></span></span><span class="bar-val">96%</span></div>
+ <div class="bar-row"><span>云图设计</span><span class="bar-track"><span class="bar-fill warn" style="width:84%"></span></span><span class="bar-val">84%</span></div>
+ <div class="bar-row"><span>恒信物流</span><span class="bar-track"><span class="bar-fill warn" style="width:81%"></span></span><span class="bar-val">81%</span></div>
+ <div class="bar-row"><span>星海科技</span><span class="bar-track"><span class="bar-fill" style="width:57%"></span></span><span class="bar-val">57%</span></div>
+ <div class="bar-row"><span>内部租户</span><span class="bar-track"><span class="bar-fill" style="width:34%"></span></span><span class="bar-val">34%</span></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="table-wrap mb-5">
+ <table class="data">
+ <thead><tr>
+ <th>租户</th><th class="num">Token 消耗</th><th class="num">成本</th><th>配额使用率</th><th class="num">环比</th><th>状态</th><th></th>
+ </tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="cell-2"><span class="l1">华东制造</span><span class="l2">tenant_ecm · 套餐 Enterprise</span></div></td>
+ <td class="num">182.4M</td><td class="num">¥7,842</td>
+ <td><span class="bar-track" style="width:140px;display:block"><span class="bar-fill danger" style="width:96%"></span></span></td>
+ <td class="num"><span class="delta down">▲ 18%</span></td>
+ <td><span class="tag tag-danger"><span class="td"></span>超配额</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="调整配额">调整</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">云图设计</span><span class="l2">tenant_yt · 套餐 Growth</span></div></td>
+ <td class="num">96.1M</td><td class="num">¥4,118</td>
+ <td><span class="bar-track" style="width:140px;display:block"><span class="bar-fill warn" style="width:84%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 9%</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>预警</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="调整配额">调整</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">恒信物流</span><span class="l2">tenant_hx · 套餐 Growth</span></div></td>
+ <td class="num">71.6M</td><td class="num">¥3,092</td>
+ <td><span class="bar-track" style="width:140px;display:block"><span class="bar-fill warn" style="width:81%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 6%</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>预警</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="调整配额">调整</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">星海科技</span><span class="l2">tenant_xh · 套餐 Basic</span></div></td>
+ <td class="num">42.9M</td><td class="num">¥1,864</td>
+ <td><span class="bar-track" style="width:140px;display:block"><span class="bar-fill" style="width:57%"></span></span></td>
+ <td class="num"><span class="delta down">▼ 3%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="调整配额">调整</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">内部租户</span><span class="l2">tenant_internal · 不限量</span></div></td>
+ <td class="num">19.8M</td><td class="num">¥1,504</td>
+ <td><span class="bar-track" style="width:140px;display:block"><span class="bar-fill" style="width:34%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 2%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="调整配额">调整</button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 5 个租户 · 合计 412.8M Token / ¥18,420</span>
+ <div class="pager-btns"><button class="is-on">1</button></div>
+ </div>
+ </div>
+
+ <div class="card mb-5">
+ <div class="card-head"><span class="card-title">按 Agent 用量明细</span><span class="card-sub">Top 6 · 当月</span><span class="rule" style="flex:1;height:1px;background:var(--line-2)"></span><span class="tag tag-brand">报价单收单比价智能体 环比 ▲ 42%</span></div>
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr>
+ <th>Agent</th><th>所属租户</th><th class="num">Token</th><th class="num">成本</th><th class="num">调用次数</th><th>用量占比</th><th class="num">环比</th><th>状态</th>
+ </tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="cell-2"><span class="l1">客服助手</span><span class="l2">agent_cs_helper · v12</span></div></td>
+ <td>内部租户</td>
+ <td class="num">64.2M</td><td class="num">¥3,120</td><td class="num">18,204</td>
+ <td><span class="bar-track" style="width:120px;display:block"><span class="bar-fill" style="width:100%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 8%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">制度问答助手</span><span class="l2">agent_policy_qa · v3</span></div></td>
+ <td>内部租户</td>
+ <td class="num">42.6M</td><td class="num">¥2,180</td><td class="num">12,480</td>
+ <td><span class="bar-track" style="width:120px;display:block"><span class="bar-fill" style="width:66%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 5%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">数据分析 Agent</span><span class="l2">agent_data_analyst · v2</span></div></td>
+ <td>云图设计</td>
+ <td class="num">31.4M</td><td class="num">¥1,760</td><td class="num">8,431</td>
+ <td><span class="bar-track" style="width:120px;display:block"><span class="bar-fill" style="width:49%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 11%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">报价单收单比价智能体 <span class="tag tag-brand">客户场景</span></span><span class="l2">agent_quote_compare · v3 · 甲客户</span></div></td>
+ <td>华东制造</td>
+ <td class="num">8.6M</td><td class="num">¥386</td><td class="num">6,410</td>
+ <td><span class="bar-track" style="width:120px;display:block"><span class="bar-fill accent" style="width:13%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 42%</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>正常</span></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">报销单预审 Agent</span><span class="l2">agent_expense_precheck · v1</span></div></td>
+ <td>星海科技</td>
+ <td class="num">4.2M</td><td class="num">¥214</td><td class="num">612</td>
+ <td><span class="bar-track" style="width:120px;display:block"><span class="bar-fill warn" style="width:7%"></span></span></td>
+ <td class="num"><span class="delta up">▲ 16%</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>预警</span></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 62 个 Agent · 仅显示 Top 6</span>
+ <div class="pager-btns"><a class="btn btn-sm" href="admin-agents.html">按 Agent 查看全部</a></div>
+ </div>
+ </div>
+ <div class="card-body pt-0"><div class="alert alert-info"><span data-ico="alert"></span><div class="grow t-sm">「报价单收单比价智能体」本月新上线即消耗 <b>8.6M Token（¥386）</b>，环比 +42%，是华东制造配额使用率升至 <b>96%</b> 的主要增量；建议为其单独设置 Agent 级配额上限。</div></div></div>
+ </div>
+
+ <div class="grid g-2">
+ <div class="card">
+ <div class="card-head"><span class="card-title">配额设置</span><span class="card-sub">作用于选中租户 · 华东制造</span></div>
+ <div class="card-body">
+ <div class="form-grid">
+ <div class="field"><label class="field-label">月度 Token 上限</label><input class="input mono" value="200000000"><span class="field-hint">当前 182.4M，剩余 17.6M</span></div>
+ <div class="field"><label class="field-label">预警阈值（%）</label><input class="input mono" value="80"><span class="field-hint">达到阈值向租户管理员发通知</span></div>
+ <div class="field"><label class="field-label">超限行为</label><select class="select"><option>拒绝调用并返回提示</option><option>降级到低成本模型</option><option>仅告警不限制</option></select></div>
+ <div class="field"><label class="field-label">统计口径</label><select class="select"><option>输入 + 输出 Token</option><option>仅输出 Token</option></select></div>
+ <div class="field span-all"><label class="field-label">通知对象</label><div class="row gap-4 wrap"><label class="check"><input type="checkbox" checked>租户管理员</label><label class="check"><input type="checkbox" checked>平台运营</label><label class="check"><input type="checkbox">财务对账组</label></div></div>
+ </div>
+ <div class="row gap-2 mt-4"><button class="btn btn-primary" data-demo="保存配额">保存配额</button><button class="btn" data-demo="重置为套餐默认">重置为套餐默认</button></div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title">成本构成</span><span class="card-sub">按模型</span></div>
+ <div class="card-body">
+ <div class="bars">
+ <div class="bar-row"><span>qwen2.5-72b</span><span class="bar-track"><span class="bar-fill" style="width:62%"></span></span><span class="bar-val">¥11.4k</span></div>
+ <div class="bar-row"><span>gpt-4o-mini</span><span class="bar-track"><span class="bar-fill" style="width:21%"></span></span><span class="bar-val">¥3.9k</span></div>
+ <div class="bar-row"><span>claude-haiku</span><span class="bar-track"><span class="bar-fill" style="width:11%"></span></span><span class="bar-val">¥2.0k</span></div>
+ <div class="bar-row"><span>本地嵌入模型</span><span class="bar-track"><span class="bar-fill accent" style="width:6%"></span></span><span class="bar-val">¥1.1k</span></div>
+ </div>
+ <div class="alert alert-info mt-4"><span data-ico="alert"></span><div class="grow t-sm">若将 <b>华东制造</b> 的摘要类任务切至 gpt-4o-mini，预计月度成本可下降约 <b>¥1,240</b>（-16%）。</div></div>
+ </div>
+ </div>
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

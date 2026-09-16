@@ -1,0 +1,131 @@
+<!-- 内置工具 -->
+                            <Expander Style="{StaticResource SkillExpander}" IsExpanded="True" Margin="0,6,0,0"
+                                      Header="内置工具">
+                                <ItemsControl x:Name="builtinToolList" Margin="0,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type core:ToolItemDef}">
+                                            <Border Style="{StaticResource RowBox}" Cursor="Hand"
+                                                    MouseLeftButtonUp="OnToolItemClick">
+                                                <Grid VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Style="{StaticResource RowDot}" 
+                                                                 Fill="{Binding StatusBrush}" 
+                                                                 Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="12.5" 
+                                                                   Foreground="{StaticResource TextBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Description}" 
+                                                               Style="{StaticResource RowSig}"
+                                                               VerticalAlignment="Center"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+
+                            <!-- 内置技能 -->
+                            <Expander Style="{StaticResource SkillExpander}" IsExpanded="True" Margin="0,6,0,0"
+                                      Header="内置技能">
+                                <ItemsControl x:Name="builtinSkillList" Margin="0,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type core:SkillDef}">
+                                            <Border Style="{StaticResource RowBox}" Cursor="Hand"
+                                                    MouseLeftButtonUp="OnSkillItemClick">
+                                                <Grid VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Style="{StaticResource RowDot}" 
+                                                                 Fill="{Binding Enabled, Converter={StaticResource BoolToBrush}}" 
+                                                                 Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="12.5" 
+                                                                   Foreground="{StaticResource TextBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Description}" 
+                                                               Style="{StaticResource RowSig}"
+                                                               VerticalAlignment="Center"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+
+                            <!-- 声明式插件 -->
+                            <Expander Style="{StaticResource SkillExpander}" IsExpanded="True" Margin="0,6,0,0"
+                                      Header="声明式插件">
+                                <ItemsControl x:Name="pluginList" Margin="0,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type core:PluginDef}">
+                                            <Border Style="{StaticResource RowBox}" Cursor="Hand"
+                                                    MouseLeftButtonUp="OnPluginItemClick">
+                                                <Grid VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Style="{StaticResource RowDot}" 
+                                                                 Fill="{Binding StatusBrush}" 
+                                                                 Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="12.5" 
+                                                                   Foreground="{StaticResource TextBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Description}" 
+                                                               Style="{StaticResource RowSig}"
+                                                               VerticalAlignment="Center"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+
+                            <!-- Skill 库 -->
+                            <Expander Style="{StaticResource SkillExpander}" IsExpanded="True" Margin="0,6,0,0"
+                                      Header="Skill 库">
+                                <ItemsControl x:Name="skillList" Margin="0,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type core:SkillDef}">
+                                            <Border Style="{StaticResource RowBox}" Cursor="Hand"
+                                                    MouseLeftButtonUp="OnSkillItemClick">
+                                                <Grid VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Style="{StaticResource RowDot}" 
+                                                                 Fill="{Binding Enabled, Converter={StaticResource BoolToBrush}}" 
+                                                                 Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}" FontSize="12.5" 
+                                                                   Foreground="{StaticResource TextBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Description}" 
+                                                               Style="{StaticResource RowSig}"
+                                                               VerticalAlignment="Center"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>

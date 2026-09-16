@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>加价出单 · 微信报价单智能体</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body class="m-body">
+<div class="m-stage">
+
+ <aside class="m-side">
+  <div class="eyebrow">H-05 · 移动端原型</div>
+  <h1>进价之上<em>加价出单</em></h1>
+  <p>对应需求 7：进价直接取自本轮最低价，加价可以口述（"整体加 8 个点"）也可以逐项录入；低于毛利底线的行会自动拦下走审批，出单后可直接发微信给客户。</p>
+  <ul>
+   <li><b>口径</b><span>报价 = 进价 ×(1+加价率)；毛利率 = 加价率 /(100+加价率)</span></li>
+   <li><b>规则（可配置）</b><span>加价率 / 客户等级系数 / 最低毛利保护均为可配置项（存 price_rule），占位默认值：全局 8% · 品类 5–12% · 等级 A1.0/B1.1/C1.2 · 毛利底线 6%</span></li>
+   <li><b>审批</b><span>低于底线或超折扣走平台审批中心</span></li>
+   <li><b>产出</b><span>报价单 Excel/PDF（抬头 + 明细 + 时效 + 账期）</span></li>
+  </ul>
+  <div class="m-links">
+   <a href="index.html">原型索引</a><a href="m-index.html">工作台</a><a href="m-intake.html">收单</a><a href="m-compare.html">比对</a><a href="m-chat.html">问答</a><a href="m-logistics.html">物流</a>
+  </div>
+ </aside>
+
+ <div class="phone">
+  <div class="m-status"><span data-mtime>9:41</span><span>企微 · 5G · 100%</span></div>
+
+  <header class="m-top">
+   <a class="m-ibtn is-back" href="m-compare.html" data-icon="chev"></a>
+   <div>
+    <div class="m-title">加价出单</div>
+    <div class="m-sub">甲客户 · 第 34 轮底稿 · 68 项</div>
+   </div>
+   <span class="m-spacer"></span>
+   <button class="m-ibtn" data-icon="users" data-toast="切换客户：甲客户 / 乙客户 / 丙客户"></button>
+   <button class="m-ibtn" data-icon="clock" data-toast="历史报价单：v2（09-04 已发）、v1（08-28 已签）"></button>
+  </header>
+
+  <div class="m-scroll">
+
+   <div class="m-card">
+    <div class="m-card-h"><span class="t">单据信息</span><span class="m-spacer"></span><span class="tag tag-info"><span class="td"></span>草稿 v3</span></div>
+    <div class="m-card-b">
+     <div class="m-grid2">
+      <div class="field" style="margin-bottom:0"><label>客户</label><div class="val">甲客户（五金贸易）</div></div>
+      <div class="field" style="margin-bottom:0"><label>账期</label><div class="val">月结 30 天</div></div>
+      <div class="field" style="margin-bottom:0"><label>税率</label><div class="val">13% 含税</div></div>
+      <div class="field" style="margin-bottom:0"><label>有效期</label><div class="val">7 天（至 09-18）</div></div>
+     </div>
+    </div>
+   </div>
+
+   <div class="m-card" style="margin-top:8px">
+    <div class="m-card-h"><span class="t">加价与毛利规则</span><span class="m-spacer"></span><span class="tag tag-info"><span class="td"></span>可配置 · 占位值</span></div>
+    <div class="m-card-b">
+     <div class="m-grid2">
+      <div class="field" style="margin-bottom:0"><label>全局加价率</label><div class="val">8%</div></div>
+      <div class="field" style="margin-bottom:0"><label>品类加价率</label><div class="val">5% – 12%</div></div>
+      <div class="field" style="margin-bottom:0"><label>客户等级系数</label><div class="val">A 1.0 · B 1.1 · C 1.2</div></div>
+      <div class="field" style="margin-bottom:0"><label>最低毛利保护</label><div class="val">6%（占位）</div></div>
+     </div>
+     <div class="m-note is-info" style="margin-top:10px" data-icon="settings">数值均为<b>占位默认值</b>，存 <code>price_rule</code> 表、策略页可视化编辑；客户给定后仅改配置、不改代码。优先级：具体客户 &gt; 品类 &gt; 全局。</div>
+    </div>
+   </div>
+
+   <div class="m-sec"><span>加价方式</span><span class="rule"></span></div>
+   <div class="m-chips" data-chips="mode">
+    <button class="is-on" data-val="整体加价">整体加价</button>
+    <button data-val="按品类">按品类</button>
+    <button data-val="逐项改价">逐项改价</button>
+   </div>
+
+   <div class="m-card" style="margin-top:8px">
+    <div class="m-card-b">
+     <div class="m-flex">
+      <input class="input" id="voice" style="flex:1" value="整体加 8 个点，开口销加 12%">
+      <button class="btn is-mic" data-icon="message" data-toast="按住说话（演示）：松开后自动转文字并解析加价指令"></button>
+     </div>
+     <div class="m-note" style="margin-top:10px" data-icon="check">已解析并应用：<b>整体 +8%</b>；<b>开口销 Φ4×32 +12%</b>（口述指令人工确认后才落库，避免误改价格）。</div>
+    </div>
+   </div>
+
+   <div class="m-sec"><span>加价试算</span><span class="rule"></span><span class="cap">进价=本轮最低价</span></div>
+
+   <div class="m-tablewrap" style="max-height:none">
+    <table class="m-table" id="calc">
+     <thead><tr><th class="sku">数据项</th><th>进价</th><th>加价%</th><th>报价</th><th>毛利率</th></tr></thead>
+     <tbody>
+      <tr data-buy="0.42"><td class="sku">GB/T 5783 M8×40</td><td>0.420</td><td><input type="number" step="0.5" value="8"></td><td class="price">0.454</td><td class="gross">7.4%</td></tr>
+      <tr data-buy="0.79"><td class="sku">GB/T 5782 M10×60</td><td>0.790</td><td><input type="number" step="0.5" value="8"></td><td class="price">0.853</td><td class="gross">7.4%</td></tr>
+      <tr data-buy="1.19"><td class="sku">304 内六角 M6×20</td><td>1.190</td><td><input type="number" step="0.5" value="8"></td><td class="price">1.285</td><td class="gross">7.4%</td></tr>
+      <tr data-buy="0.16"><td class="sku">开口销 Φ4×32</td><td>0.160</td><td><input type="number" step="0.5" value="12"></td><td class="price">0.179</td><td class="gross">10.7%</td></tr>
+      <tr data-buy="0.20"><td class="sku">弹垫 M12</td><td>0.200</td><td><input type="number" step="0.5" value="3"></td><td class="price">0.206</td><td class="gross cell-high">2.9%</td></tr>
+     </tbody>
+    </table>
+   </div>
+
+   <div class="m-row-total" style="margin-top:8px">
+    <span>平均毛利率</span><span class="m-num" id="avg">4.5%</span>
+    <span class="m-spacer"></span>
+    <span style="color:var(--ink-3)">报价合计（示例 5 项）</span><span class="m-num" id="sum">2.98</span>
+   </div>
+
+   <div class="m-note is-danger" style="margin-top:10px" data-icon="alert"><b>弹垫 M12 毛利率 2.9% 低于占位底线 6%</b>：提交时会自动转入审批（审批人：李经理），也可以把加价率提到 6.4% 以上直接出单；底线数值为可配置项（策略页可调）。</div>
+
+   <div class="m-note" style="margin-top:8px" data-icon="search">口径说明：报价 = 进价 ×(1+加价率)；毛利率 = 加价率 ÷(100+加价率)。本轮进价取自第 34 轮 4 家供应商的最低有效报价（规格冲突项已排除）。</div>
+
+   <div class="m-actions" style="margin-top:14px">
+    <button class="btn btn-primary" data-sheet-open="sheet-quote" data-icon="check">生成报价单</button>
+    <button class="btn" data-toast="已保存草稿 v3，可继续在 PC 端调整" >存草稿</button>
+   </div>
+
+   <p style="font-size:11px;color:var(--ink-4);margin:14px 2px 0">改动加价率会实时重算报价与毛利率；低于底线的行标红并拦截直接出单。</p>
+  </div>
+
+  <nav class="m-tab" id="m-tab"></nav>
+
+  <div class="m-scrim" id="m-scrim"></div>
+  <div class="m-toast" id="m-toast"></div>
+
+  <div class="m-sheet" id="sheet-quote">
+   <div class="m-sheet-h">
+    <span class="t">报价单预览</span>
+    <span class="m-spacer"></span>
+    <button class="m-ibtn" data-icon="x" data-sheet-close></button>
+   </div>
+   <div class="m-sheet-b">
+    <div class="m-card">
+     <div class="m-card-b">
+      <div style="font-size:var(--t-lg);font-weight:640">甲客户五金贸易有限公司</div>
+      <div class="ms" style="margin-top:4px">报价单 Q-2026-0343 · v3 · 2026-09-11</div>
+      <div class="m-tablewrap" style="max-height:none;margin-top:10px">
+       <table class="m-table" style="min-width:100%">
+        <thead><tr><th class="sku">数据项</th><th>数量</th><th>单价</th><th>金额</th></tr></thead>
+        <tbody>
+         <tr><td class="sku">GB/T 5783 M8×40</td><td>60,000</td><td>0.454</td><td>27,240</td></tr>
+         <tr><td class="sku">GB/T 5782 M10×60</td><td>30,000</td><td>0.853</td><td>25,590</td></tr>
+         <tr><td class="sku">304 内六角 M6×20</td><td>8,000</td><td>1.285</td><td>10,280</td></tr>
+         <tr><td class="sku">开口销 Φ4×32</td><td>20,000</td><td>0.179</td><td>3,580</td></tr>
+         <tr><td class="sku">弹垫 M12</td><td>15,000</td><td>0.206</td><td>3,090</td></tr>
+        </tbody>
+       </table>
+      </div>
+      <div class="m-row-total" style="margin-top:10px"><span>含税合计 13%</span><span class="m-spacer"></span><span class="m-num">69,780.00</span></div>
+      <div class="ms" style="margin-top:8px">报价有效期 7 天（至 09-18）· 月结 30 天 · 运费到付 · 交期 7~12 天</div>
+     </div>
+    </div>
+
+    <div class="m-note is-warn" style="margin-top:12px" data-icon="alert">弹垫 M12 毛利率 2.9% 低于底线，提交后需李经理审批通过才会生成正式单据。</div>
+
+    <div class="m-actions" style="margin-top:12px">
+     <button class="btn btn-primary" data-icon="message" data-toast="已发送到甲客户微信（附 PDF 报价单）">发微信给客户</button>
+     <button class="btn" data-icon="download" data-toast="已下载 报价单_Q-2026-0343.pdf">下载 PDF</button>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px" data-toast="已提交审批：1 项低于毛利底线，等待李经理确认">提交审批</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script src="assets/mobile.js"></script>
+<script>
+/* 演示用：加价率改动 → 实时重算报价、毛利率、合计与平均毛利 */
+(function () {
+  var table = document.getElementById('calc');
+  if (!table) return;
+  var rows = [].slice.call(table.querySelectorAll('tbody tr'));
+  var avgEl = document.getElementById('avg');
+  var sumEl = document.getElementById('sum');
+
+  function calc () {
+    var sum = 0, pctSum = 0, low = 0;
+    rows.forEach(function (tr) {
+      var buy = parseFloat(tr.getAttribute('data-buy'));
+      var pct = parseFloat(tr.querySelector('input').value) || 0;
+      var price = buy * (1 + pct / 100);
+      var gross = pct / (100 + pct) * 100;
+      tr.querySelector('.price').textContent = price.toFixed(3);
+      var gEl = tr.querySelector('.gross');
+      gEl.textContent = gross.toFixed(1) + '%';
+      gEl.className = 'gross' + (gross < 6 ? ' cell-high' : '');
+      if (gross < 6) low++;
+      sum += price; pctSum += gross;
+    });
+    sumEl.textContent = sum.toFixed(2);
+    avgEl.textContent = (pctSum / rows.length).toFixed(1) + '%';
+    avgEl.style.color = low ? 'var(--danger)' : '';
+  }
+  table.addEventListener('input', calc);
+  calc();
+})();
+</script>
+</body>
+</html>

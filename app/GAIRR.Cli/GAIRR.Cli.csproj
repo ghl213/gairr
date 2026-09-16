@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>gairr-cli</AssemblyName>
+    <RootNamespace>GAIRR.Cli</RootNamespace>
+    <Version>0.2.0</Version>
+    <Product>gairr-cli</Product>
+    <Description>GAIRR Agent 命令行宿主（headless 验证）：gairr-cli --project &lt;root&gt; --ask "任务"</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GAIRR.Agent\GAIRR.Agent.csproj" />
+  </ItemGroup>
+
+  <!-- 开发便利：模型配置跟随 GAIRR 壳（存在才复制，发布时以发布目录 config.ini 为准） -->
+  <ItemGroup>
+    <None Include="..\GAIRR\config.ini" Link="config.ini" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\GAIRR\config.ini')" />
+    <None Include="..\GAIRR\system.ini" Link="system.ini" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\GAIRR\system.ini')" />
+    <!-- 工具级提示词（工作模式等，与项目无关）：从 GAIRR 壳 prompts/ 复制到本程序目录，供 AgentLoop.PromptPath 读取 -->
+    <None Include="..\GAIRR\prompts\**" Link="prompts\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\GAIRR\prompts')" />
+  </ItemGroup>
+
+</Project>

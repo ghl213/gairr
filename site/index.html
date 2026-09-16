@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概尔工栈 GAIRR - 面向本地优先场景的 AI 开发平台</title>
+<meta name="description" content="GAIRR（概尔工栈）：面向本地优先场景的 AI 开发平台。Ollama/llama.cpp 一键接入、GPU 实时监控、智能上下文压缩、LSP 语言服务器，让本地模型开发效率翻倍。数据不出电脑，敏感项目零风险。">
+<meta name="keywords" content="GAIRR,概尔工栈,本地优先,AI开发平台,Ollama,llama.cpp,本地AI开发,Agent工具,本地模型部署">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='15' font-weight='bold' fill='%23fff' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #07070f;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #eef0f6;
+    --dim: #9aa0b4;
+    --p1: #6366f1;
+    --p2: #06b6d4;
+    --sans: "Microsoft YaHei", "PingFang SC", sans-serif;
+    --mono: Consolas, "Courier New", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.7; overflow-x: hidden; }
+  a { text-decoration: none; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+  .grad { background: linear-gradient(92deg, var(--p1), var(--p2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .glow { position: fixed; border-radius: 50%; filter: blur(120px); opacity: .22; pointer-events: none; z-index: 0; }
+  .glow.g1 { width: 560px; height: 560px; background: var(--p1); top: -180px; left: -120px; }
+  .glow.g2 { width: 480px; height: 480px; background: var(--p2); top: 300px; right: -160px; }
+  .page { position: relative; z-index: 1; }
+
+  /* 统一导航 */
+  header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); background: rgba(7, 7, 15, 0.7); border-bottom: 1px solid var(--border); }
+  nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-size: 20px; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+  .logo-mark { display: inline-block; background: #000; color: #fff; font-weight: bold; padding: 3px 10px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(255,255,255,.18); font-size: 19px; line-height: 1.4; }
+  .logo span.cn { font-size: 13px; color: var(--dim); margin-left: 0; font-weight: normal; }
+  nav ul { display: flex; gap: 30px; list-style: none; }
+  nav ul a { color: var(--dim); font-size: 14px; padding: 6px 0; border-bottom: 2px solid transparent; }
+  nav ul a:hover { color: var(--text); }
+  nav ul a.cur { color: var(--text); border-bottom-color: var(--p1); }
+  .btn { display: inline-block; padding: 11px 28px; border-radius: 999px; font-size: 14px; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-main { background: linear-gradient(92deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 6px 24px rgba(99, 102, 241, .35); }
+  .btn-line { border: 1px solid var(--border); color: var(--text); }
+
+  /* 主页：Hero */
+  .hero { padding: 100px 0 84px; text-align: center; }
+  .hero h1 { font-size: 52px; line-height: 1.25; font-weight: bold; letter-spacing: 1px; }
+  .hero .sub { color: var(--dim); font-size: 17px; max-width: 640px; margin: 26px auto 0; }
+  .hero .cta { margin-top: 42px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .hero .trust { margin-top: 40px; color: var(--dim); font-size: 13px; font-family: var(--mono); }
+
+  section { padding: 80px 0; border-top: 1px solid var(--border); }
+  .sec-head { text-align: center; margin-bottom: 48px; }
+  .sec-head .tag { font-size: 13px; letter-spacing: 2px; color: var(--p2); margin-bottom: 12px; font-family: var(--mono); }
+  .sec-head h2 { font-size: 32px; }
+  .sec-head p { color: var(--dim); margin-top: 12px; }
+
+  /* 演示窗 */
+  .win { background: rgba(10, 10, 20, .8); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; font-family: var(--mono); font-size: 13.5px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
+  .win-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .win-bar i { width: 11px; height: 11px; border-radius: 50%; }
+  .win-bar i:nth-child(1) { background: #ff5f57; } .win-bar i:nth-child(2) { background: #febc2e; } .win-bar i:nth-child(3) { background: #28c840; }
+  .win-bar span { margin-left: 10px; color: var(--dim); font-size: 12px; }
+  .win-body { padding: 22px 26px; overflow-x: auto; }
+  .win-body div { white-space: pre; padding: 2px 0; }
+  .w-cmd { color: var(--text); } .w-cmd::before { content: "$ "; color: var(--p2); }
+  .w-ok { color: #34d399; } .w-dim { color: #6b7089; } .w-warn { color: #fbbf24; }
+  .demo-foot { text-align: center; margin-top: 26px; }
+
+  /* 功能卡 */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 30px 26px; backdrop-filter: blur(6px); transition: border-color .2s, transform .2s; }
+  .card:hover { border-color: rgba(99, 102, 241, .5); transform: translateY(-4px); }
+  .card .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(99,102,241,.25), rgba(6,182,212,.25)); border: 1px solid var(--border); font-size: 18px; margin-bottom: 18px; }
+  .card h3 { font-size: 17px; margin-bottom: 8px; }
+  .card p { font-size: 13.5px; color: var(--dim); }
+
+  /* 场景清单 */
+  .cases { display: grid; gap: 14px; }
+  .case { display: grid; grid-template-columns: 300px 1fr; align-items: center; gap: 22px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; transition: border-color .2s, transform .2s; }
+  .case:hover { border-color: rgba(99, 102, 241, .5); transform: translateX(4px); }
+  .case .n { font-size: 15px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+  .case .n i { font-style: normal; color: var(--p2); }
+  .case .d { font-size: 12.5px; color: var(--dim); margin-top: 4px; line-height: 1.6; }
+  .case pre { margin: 0; font-family: var(--mono); font-size: 12.5px; color: #c9cdec; background: #0c0d18; border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; overflow-x: auto; white-space: nowrap; }
+  .case pre .p { color: var(--p2); }
+  .cases-note { text-align: center; color: var(--dim); font-size: 14px; margin-top: 30px; }
+  .cases-note b { color: var(--text); }
+
+  /* why */
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
+  .why-grid p { color: var(--dim); margin-bottom: 16px; font-size: 15px; }
+  .why-grid p b { color: var(--text); }
+  .why-card { border-radius: 20px; padding: 44px 40px; font-size: 22px; line-height: 1.8; background: linear-gradient(135deg, rgba(99,102,241,.14), rgba(6,182,212,.10)); border: 1px solid rgba(99, 102, 241, .3); }
+  .why-card small { display: block; margin-top: 14px; font-size: 13px; color: var(--dim); font-family: var(--mono); }
+
+  /* 下载 */
+  .dl { text-align: center; }
+  .dl-panel { display: inline-block; padding: 54px 76px; border-radius: 24px; background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(8px); }
+  .dl-panel .name { font-size: 26px; font-weight: bold; }
+  .dl-panel .ver { color: var(--dim); font-size: 13px; font-family: var(--mono); margin-top: 8px; }
+  .dl-soon { display: inline-block; margin-top: 28px; padding: 14px 48px; border-radius: 999px; font-size: 15px; border: 1px dashed rgba(255, 255, 255, .25); color: var(--dim); }
+  .dl-panel .tip { margin-top: 20px; color: var(--dim); font-size: 13px; }
+
+  /* 页脚 */
+  footer { border-top: 1px solid var(--border); padding: 44px 0; text-align: center; font-size: 13px; color: var(--dim); }
+  footer .line { margin-bottom: 8px; }
+  footer a { color: var(--dim); }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: 1fr; }
+    .case { grid-template-columns: 1fr; gap: 10px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 34px; }
+    nav ul { display: none; }
+    .dl-panel { padding: 40px 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="page">
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><span class="logo-mark">GAIRR</span><span class="cn">概尔工栈</span></div>
+      <ul>
+        <li><a class="cur" href="index.html">首页</a></li>
+        <li><a href="docs.html">文档</a></li>
+        <li><a href="demo.html">演示</a></li>
+      </ul>
+      <a class="btn btn-main" href="#download">获取 GAIRR</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1><span class="grad">面向本地优先场景的 AI 开发平台</span></h1>
+    <p class="sub">数据敏感、成本敏感、离线环境——本地部署不是退而求其次，而是主动选择。Ollama / llama.cpp 一键接入 · GPU 实时监控 · 智能上下文压缩 · LSP 语言服务器。</p>
+    <div class="cta">
+      <a class="btn btn-main" href="demo.html">进入演示 →</a>
+      <a class="btn btn-line" href="docs.html">阅读文档</a>
+    </div>
+    <p class="trust">本地优先 · 模型自由切换 · 数据隐私保障 · 开发人员专属</p>
+  </div>
+</div>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="tag">LIVE DEMO</div>
+      <h2>一句话下达，剩下的它自己跑</h2>
+      <p>改 50 个文件这种活，不用守着屏幕。下任务、去喝茶，完事钉钉会叫你。</p>
+    </div>
+    <div class="win">
+      <div class="win-bar"><i></i><i></i><i></i><span>GAIRR · 批处理模式</span></div>
+      <div class="win-body">
+        <div class="w-cmd">gairr -t "把 src 下所有源码转为 UTF-8，并跑编译验证"</div>
+        <div class="w-dim">[14:01] 任务启动 · 已对 src/ 下 50 个文件做任务级备份</div>
+        <div class="w-ok">[14:02] Edit src/Login.pas        ✓ 转码完成</div>
+        <div class="w-ok">[14:02] Edit src/MainForm.pas     ✓ 转码完成</div>
+        <div class="w-dim">[14:03] ... 其余 48 个文件处理中</div>
+        <div class="w-warn">[14:06] Edit src/Utils.pas        ✗ 编译失败：标识符未声明</div>
+        <div class="w-dim">[14:06] Agent 自动修复中（第 2 轮）</div>
+        <div class="w-ok">[14:07] Edit src/Utils.pas        ✓ 修复并编译通过</div>
+        <div class="w-ok">[14:09] 全部完成 · 50/50 · 编译通过 · 已发送钉钉通知</div>
+      </div>
+    </div>
+    <div class="demo-foot">
+      <a class="btn btn-line" href="demo.html">体验完整交互演示（可以亲手输入）→</a>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="tag">FEATURES</div>
+      <h2>六大核心能力，重新定义本地 AI 开发</h2>
+      <p>不是功能的堆砌，而是围绕"本地优先"这一核心场景的系统性设计。每一项都是其他工具不具备的差异化能力。</p>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="ic">🧠</div><h3>本地模型深度优化</h3><p>五层混合检索、可逆压缩、计划分解、最小任务聚焦——整套体系专为 27B 量化小模型设计，单卡 3090 即可达到可用水平。<b>其他工具完全不具备。</b></p></div>
+      <div class="card"><div class="ic">📈</div><h3>自动化沉淀与学习</h3><p>自动任务固化 Skill、经验积累、用户语义映射、使用习惯适应。工具越用越顺手，具备真正的"成长性"。</p></div>
+      <div class="card"><div class="ic">🛡️</div><h3>可靠性与安全性</h3><p>会话级硬备份 + Git 自动提交 + 钉钉通知，文件误改秒级恢复；危险命令防护、权限确认机制完善，任务结果全透明。</p></div>
+      <div class="card"><div class="ic">📄</div><h3>文档同步维护</h3><p>代码变更自动更新关联文档，解决开发中"文档滞后"的顽疾。<b>目前无任何主流工具原生支持。</b></p></div>
+      <div class="card"><div class="ic">🌡️</div><h3>硬件状态监控</h3><p>实时显示 GPU 显存/利用率/温度，单卡高负载场景一目了然。本地推理瓶颈定位，从猜变成看。</p></div>
+      <div class="card"><div class="ic">🔌</div><h3>扩展性与生态</h3><p>配置化插件、GitHub 市场索引、REST API + SSE 流式输出。可嵌入其他系统，具备平台化潜力。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="use">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="tag">USE CASES</div>
+      <h2>本地优先场景，开发不止于此</h2>
+      <p>GAIRR 的骨架是一台"本地优先的 AI 开发助手"——凡是需要代码理解、项目分析、自动化处理的活，本地部署都能干。</p>
+    </div>
+    <div class="cases">
+      <div class="case">
+        <div><div class="n"><i>◈</i>本地优先代码审查</div><div class="d">Qwen3.8-27B 本地跑代码审查，敏感源码不出本机。自动检查规范、标注意图、生成报告。</div></div>
+        <pre><span class="p">$</span> gairr -t "审查 src/ 下所有修改，检查是否符合 CodeStyle 规范"</pre>
+      </div>
+      <div class="case">
+        <div><div class="n"><i>▤</i>大型项目代码理解</div><div class="d">32K 上下文窗口 + 智能压缩，让本地模型也能读懂大型项目。LSP 精准检索，符号级代码导航。</div></div>
+        <pre><span class="p">$</span> gairr -t "分析这个项目的架构，找出核心模块和依赖关系"</pre>
+      </div>
+      <div class="case">
+        <div><div class="n"><i>⚙</i>无人值守批量重构</div><div class="d">批量重命名、迁移 API、更新依赖。本地模型逐文件处理，改完自动备份 + 编译验证。</div></div>
+        <pre><span class="p">$</span> gairr -t "把所有旧版 API 调用迁移到新版，改完跑编译验证"</pre>
+      </div>
+      <div class="case">
+        <div><div class="n"><i>❐</i>敏感项目本地开发</div><div class="d">金融、医疗、政务项目，代码数据绝不出内网。本地模型 + 本地数据库，零外发风险。</div></div>
+        <pre><span class="p">$</span> gairr --local -t "分析数据库 schema，生成实体类代码"</pre>
+      </div>
+      <div class="case">
+        <div><div class="n"><i>▲</i>离线环境开发</div><div class="d">内网机房、客户现场、出差途中，没网也能用。本地模型随叫随到，开发不中断。</div></div>
+        <pre><span class="p">$</span> gairr -t "这个函数报空指针，帮我定位可能的原因"</pre>
+      </div>
+      <div class="case">
+        <div><div class="n"><i>✎</i>成本敏感场景</div><div class="d">高频开发任务用本地模型，复杂任务切云端。按场景选模型，成本可控，效果不打折。</div></div>
+        <pre><span class="p">$</span> gairr -t "生成单元测试用例，覆盖所有边界条件" --model local</pre>
+      </div>
+    </div>
+    <p class="cases-note">不是替代云端模型，而是让 <b>本地优先成为开发工作流的第一选择</b>，云端按需兜底。</p>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="why-grid">
+      <div>
+        <div class="sec-head" style="text-align:left;margin-bottom:24px;">
+          <div class="tag">WHY GAIRR</div>
+          <h2>不是又一个 AI 工具，是会成长的开发伙伴</h2>
+        </div>
+        <p><b>五层混合检索 + 可逆压缩</b>：专为 27B 量化小模型设计的优化体系，让单卡 3090 上的本地模型达到真正可用水平——这是其他工具完全不具备的系统性设计。</p>
+        <p><b>自动化沉淀与学习</b>：每次任务自动固化 Skill、积累经验、映射语义。用了一个月和第一天的 GAIRR，完全是两个工具。它记得你的习惯，懂你的项目。</p>
+        <p><b>文档同步维护</b>：代码改了，关联文档自动更新。解决"文档滞后"这个开发顽疾——目前无任何主流工具原生支持。</p>
+        <p>你的云端模型继续处理复杂任务，GAIRR 让本地模型成为日常开发的主力，而且越用越强。</p>
+      </div>
+      <div class="why-card">
+        "GAIRR 不是工具，是和你一起成长的开发伙伴。"
+        <small>Generalized AI Resources &amp; Runtime</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="download" class="dl">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="tag">DOWNLOAD</div>
+      <h2>获取 GAIRR</h2>
+      <p>Windows 绿色版，解压即用。支持 Ollama / llama.cpp / LM Studio 一键接入。</p>
+    </div>
+    <div class="dl-panel">
+      <div class="name"><span class="logo-mark" style="font-size:22px;padding:4px 14px;">GAIRR</span> Desktop</div>
+      <div class="ver">v0.2.0 · Windows x64 · 绿色版</div>
+      <a class="btn btn-main" href="#" style="margin-top:28px;display:inline-block;">下载 GAIRR.exe (148 MB)</a>
+      <div class="tip" style="margin-top:16px;">系统要求：Windows 10/11 x64 · 可选：Ollama 或 llama.cpp 用于本地模型</div>
+      <div class="tip" style="margin-top:8px;font-size:12px;">SHA-256: a1b2c3d4e5f6...（验证文件完整性）</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="line">© <span id="year">2026</span> 概尔工栈 GAIRR · gairr.com</div>
+    <div class="line"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2021003872号-1</a></div>
+  </div>
+</footer>
+
+</div>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>

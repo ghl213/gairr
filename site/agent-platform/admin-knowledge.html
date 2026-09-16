@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识库管理 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-06</span><span class="sep">/</span><b>知识库</b><span class="sep">/</span><span>售后政策库</span></div>
+ <div class="grow"></div>
+ <button class="btn btn-sm" data-ico="search" data-demo="检索测试">检索测试</button>
+ <button class="btn btn-sm" data-ico="refresh" data-demo="重建索引">重建索引</button>
+ <button class="btn btn-primary btn-sm" data-ico="plus" data-demo="上传文档">上传文档</button>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">管</span></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">构建域 · 知识</div>
+ <h1 class="h1 mt-2">知识库管理</h1>
+ <p class="page-desc">索引分四阶段推进：解析 → 清洗 → 切片 → 向量化。任一阶段失败可单独重试，不会污染已入库的切片。</p>
+ </div>
+ <div class="page-actions">
+ <div class="seg" data-seg><button class="is-on">售后政策库</button><button>产品手册</button><button>合同范本</button></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="grid g-4 mb-4">
+ <div class="kpi"><span class="kpi-label">文档数</span><span class="kpi-value">248<small>份</small></span><span class="kpi-foot">今日新增 6 份</span></div>
+ <div class="kpi"><span class="kpi-label">切片总数</span><span class="kpi-value">12,406<small>片</small></span><span class="kpi-foot">平均 412 tokens / 片</span></div>
+ <div class="kpi is-ok"><span class="kpi-label">索引完成率</span><span class="kpi-value">97.6<small>%</small></span><span class="kpi-foot">失败 6 份待处理</span></div>
+ <div class="kpi is-warn"><span class="kpi-label">检索命中率（近 7 天）</span><span class="kpi-value">88.2<small>%</small></span><span class="kpi-foot">目标 ≥ 90%</span></div>
+ </div>
+
+ <div class="grid g-2-1">
+
+ <div>
+ <div class="toolbar">
+ <span class="input-icon grow"><span data-ico="search"></span><input class="input" placeholder="按文件名 / 来源过滤"></span>
+ <select class="select" style="width:160px"><option>全部状态</option><option>索引完成</option><option>索引中</option><option>失败</option></select>
+ <select class="select" style="width:160px"><option>全部来源</option><option>本地上传</option><option>企业网盘</option><option>网页抓取</option></select>
+ <button class="btn" data-ico="filter" data-demo="高级筛选">筛选</button>
+ </div>
+
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>文档</th><th>来源</th><th class="num">切片</th><th>索引进度</th><th class="num">最近更新</th><th></th></tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="cell-2"><span class="l1">售后政策_v4.pdf</span><span class="l2">1.2 MB · 42 页</span></div></td>
+ <td class="t-sm">本地上传</td><td class="num">186</td>
+ <td><div class="stages"><span class="stage done"><span class="sd"></span>解析</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>清洗</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>切片</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>向量化</span></div></td>
+ <td class="num">09-30 14:02</td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看切片">切片</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">产品退换货指引.docx</span><span class="l2">320 KB · 18 页</span></div></td>
+ <td class="t-sm">企业网盘</td><td class="num">94</td>
+ <td><div class="stages"><span class="stage done"><span class="sd"></span>解析</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>清洗</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>切片</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>向量化</span></div></td>
+ <td class="num">09-29 10:20</td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看切片">切片</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr class="is-selected">
+ <td><div class="cell-2"><span class="l1">客服话术库_2026Q3.xlsx</span><span class="l2">2.4 MB · 1,204 行</span></div></td>
+ <td class="t-sm">本地上传</td><td class="num">—</td>
+ <td><div class="stages"><span class="stage done"><span class="sd"></span>解析</span><span class="stage-line"></span><span class="stage run"><span class="sd"></span>清洗</span><span class="stage-line"></span><span class="stage"><span class="sd"></span>切片</span><span class="stage-line"></span><span class="stage"><span class="sd"></span>向量化</span></div></td>
+ <td class="num">正在进行</td>
+ <td class="actions"><button class="btn btn-sm" data-demo="取消索引">取消</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">帮助中心抓取_20260928</span><span class="l2">36 个页面</span></div></td>
+ <td class="t-sm">网页抓取</td><td class="num">—</td>
+ <td><div class="stages"><span class="stage done"><span class="sd"></span>解析</span><span class="stage-line"></span><span class="stage fail"><span class="sd"></span>清洗失败</span><span class="stage-line"></span><span class="stage"><span class="sd"></span>切片</span><span class="stage-line"></span><span class="stage"><span class="sd"></span>向量化</span></div></td>
+ <td class="num">09-28 09:12</td>
+ <td class="actions"><button class="btn btn-sm" data-demo="重试索引">重试</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">质保条款汇总.md</span><span class="l2">64 KB</span></div></td>
+ <td class="t-sm">本地上传</td><td class="num">28</td>
+ <td><div class="stages"><span class="stage done"><span class="sd"></span>解析</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>清洗</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>切片</span><span class="stage-line"></span><span class="stage done"><span class="sd"></span>向量化</span></div></td>
+ <td class="num">09-26 16:44</td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看切片">切片</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 248 份文档 · 第 1 / 25 页</span><div class="pager-btns"><button>‹</button><button class="is-on">1</button><button>2</button><button>3</button><button>…</button><button>›</button></div></div>
+ </div>
+ </div>
+
+ <div class="col gap-4">
+
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">切片预览</span><span class="card-sub mono">售后政策_v4.pdf #P12</span></div>
+ <div class="card-body col gap-3">
+ <div class="bubble t-sm">第七条 无理由退货：自签收之日起 7 个自然日内，商品不影响二次销售的，客户可申请无理由退货。定制类、拆封的软件授权类商品除外。</div>
+ <div class="meta-list">
+ <div class="meta-row"><span class="meta-k">切片 ID</span><span class="meta-v mono t-xs">ck_8f21a04b</span></div>
+ <div class="meta-row"><span class="meta-k">Tokens</span><span class="meta-v mono t-xs">286</span></div>
+ <div class="meta-row"><span class="meta-k">可见范围</span><span class="meta-v t-sm">全租户 · 所有成员</span></div>
+ <div class="meta-row"><span class="meta-k">最近命中</span><span class="meta-v t-sm">41 次（近 7 天）</span></div>
+ </div>
+ </div>
+ <div class="card-foot row row-gap"><button class="btn btn-sm" data-ico="filter" data-demo="隐藏该切片">隐藏</button><button class="btn btn-sm" data-ico="refresh" data-demo="重新切片">重新切片</button></div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">检索测试</span><button class="btn btn-sm" data-ico="search" data-demo="执行检索">检索</button></div>
+ <div class="card-body col gap-3">
+ <div class="field"><label class="field-label">查询语句</label><input class="input" value="定制商品能退吗？"></div>
+ <div class="row row-gap t-xs"><span class="tag tag-outline">TopK 5</span><span class="tag tag-outline">阈值 0.62</span><span class="tag tag-outline">重排 开</span></div>
+ <div class="col gap-2">
+ <div class="card card-pad card-flat"><div class="row-between"><span class="t-sm strong">售后政策_v4.pdf #P12</span><span class="tag tag-ok mono t-xs">0.88</span></div><div class="t-xs muted mt-1">第七条 无理由退货：…定制类、拆封的软件授权类商品除外。</div></div>
+ <div class="card card-pad card-flat"><div class="row-between"><span class="t-sm strong">产品退换货指引.docx #P04</span><span class="tag tag-warn mono t-xs">0.71</span></div><div class="t-xs muted mt-1">以下品类不支持无理由退货：定制商品、鲜活易腐…</div></div>
+ <div class="card card-pad card-flat"><div class="row-between"><span class="t-sm strong">质保条款汇总.md #P02</span><span class="tag tag-outline mono t-xs">0.58</span></div><div class="t-xs muted mt-1">质保期内非人为损坏可免费维修…（低于阈值，未采用）</div></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">访问控制</span><span class="tag tag-info">ACL</span></div>
+ <div class="card-body col gap-3">
+ <div class="row-between t-sm"><span>全租户公开</span><label class="switch"><input type="checkbox" checked><i></i></label></div>
+ <div class="row-between t-sm"><span>限制指定角色</span><label class="switch"><input type="checkbox"><i></i></label></div>
+ <div class="row-between t-sm"><span>允许 API 检索</span><label class="switch"><input type="checkbox" checked><i></i></label></div>
+ <div class="alert alert-info"><span data-ico="alert"></span><div class="grow">受限知识库的切片不会进入无权限成员的检索结果，命中数将相应下降。</div></div>
+ </div>
+ </div>
+
+ </div>
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

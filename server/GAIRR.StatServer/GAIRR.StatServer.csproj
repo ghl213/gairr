@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>gairr-stats-server</AssemblyName>
+    <RootNamespace>GAIRR.StatServer</RootNamespace>
+    <Version>0.1.0</Version>
+    <Product>gairr-stats-server</Product>
+    <Description>GAIRR 统计与版本服务：接收桌面端匿名设备每日使用时长上报，提供版本检查（Kestrel + stats.json 文件存储，无界面）</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- data/latest.json：最新版本声明（部署后可直接在服务器 data/ 下改，无需重编） -->
+    <None Include="data/latest.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

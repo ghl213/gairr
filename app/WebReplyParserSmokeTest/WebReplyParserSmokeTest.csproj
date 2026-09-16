@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>WebReplyParserSmokeTest</AssemblyName>
+    <RootNamespace>GAIRR</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GAIRR.Agent\GAIRR.Agent.csproj" />
+  </ItemGroup>
+
+  <!-- 直接编译被测解析器源码（它是 app\GAIRR(WPF) 里的文件，不便被控制台工程引用） -->
+  <ItemGroup>
+    <Compile Include="..\GAIRR\WebModel\WebReplyParser.cs" />
+    <Compile Include="..\GAIRR\WebModel\WebReplyParser.Xml.cs" />
+  </ItemGroup>
+
+</Project>

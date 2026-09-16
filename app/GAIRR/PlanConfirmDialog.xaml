@@ -1,0 +1,218 @@
+<!--
+  计划确认对话框（P2 + P3 5.2 增强）：任务树审查 + 候选切换 + 待补验收补齐 + 疑似跨节点扩散 + 文档待同步。
+  - 待补叶子（缺 accept）：高亮"待补"，未补全则禁用【确认执行】；提供一键默认值("按 goal 完成实现并通过编译")。
+  - 疑似跨节点标记（SuspectCrossNode=true）：勾选"确需扩散" → 写 plan.crossRefs 待定占位(toNodeId=null) + collectLog，
+    目标节点不在确认框填写，待后续编排到目标节点时补引用（引用，不复制任务树）。
+  - 任何改树（补 accept / 勾选扩散）都会置 DocOutdated=true（"文档待同步"，由模型按 diff 更新 doc.md）。
+  "确认执行"置 approved 并落盘（P3 PlanRunner 消费入口）。
+-->
+<Window x:Class="GAIRR.PlanConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="确认编排方案" Width="1080" Height="720" MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Microsoft YaHei, PingFang SC, sans-serif"
+        ResizeMode="CanResizeWithGrip" WindowStyle="None">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="DialogPrimaryBtn" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource GradP12}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.72"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="DialogSecondaryBtn" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="#1C1D29"/>
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="#2B2D3A"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="10">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题行：窗口标题（无系统标题栏，整行可按住拖动窗口） -->
+            <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="OnTitleDrag">
+                <TextBlock Text="确认编排方案" FontSize="17" FontWeight="Bold"/>
+            </Grid>
+
+            <!-- 固定信息区：任务标题（新建会话时填写）→ 模式 + 入选候选 + 降级警示（层级：标题 → 模式 → 下方主体内容） -->
+            <StackPanel Grid.Row="1" Margin="0,8,0,10">
+                <TextBlock x:Name="tbTitle" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock x:Name="tbMode" FontSize="12" Foreground="{StaticResource DimBrush}"/>
+                    <TextBlock x:Name="tbWarn" FontSize="12" Foreground="#E8B93E" Margin="14,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 中间主体：主区 = L0 目标文本框（上 50%）+ 任务树（下 50%）上下排布、宽 100%；
+                 候选/待补/跨节点扩展操作按需弹出右侧窄栏（无内容时整栏收起，主区占满全宽） -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- L0 目标：只读文本框（全文可滚动查看，不再于信息区挤压标题/任务树） -->
+                    <Border Grid.Row="0" Margin="0,0,0,6" Background="{StaticResource CardBrush}"
+                            BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="L0 目标" FontSize="12"
+                                       Foreground="{StaticResource DimBrush}" Margin="0,0,0,6"/>
+                            <TextBox x:Name="txtGoal" FontSize="13" TextWrapping="Wrap" IsReadOnly="True"
+                                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                     VerticalContentAlignment="Top" Padding="6,4"
+                                     Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                                     BorderBrush="{StaticResource BorderBrush2}" CaretBrush="{StaticResource TextBrush}"/>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- 任务树（当前方案）：TreeView 列表自带滚动 -->
+                    <Border Grid.Row="1" Margin="0,6,0,0" Background="{StaticResource CardBrush}"
+                            BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Text="任务树（当前方案）" FontSize="12"
+                                       Foreground="{StaticResource DimBrush}" Margin="0,0,0,6"/>
+                            <TreeView x:Name="tree" Background="Transparent" BorderThickness="0"
+                                      Foreground="{StaticResource TextBrush}"/>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 右侧窄栏：候选列表（仅多模型商讨）/ 待补验收 / 疑似跨节点扩散；任一可见才展开 -->
+                <ScrollViewer x:Name="sidePanel" Grid.Column="1" Width="340" Margin="12,0,0,0"
+                              Visibility="Collapsed" VerticalScrollBarVisibility="Auto"
+                              Style="{StaticResource HiddenScrollViewer}">
+                    <StackPanel>
+                        <!-- 候选列表（仅多模型商讨模式） -->
+                        <Border x:Name="panelCandidates" Visibility="Collapsed"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Text="候选方案（评估分）" FontSize="12"
+                                           Foreground="{StaticResource DimBrush}" Margin="0,0,0,6"/>
+                                <ListBox x:Name="lbCandidates" Background="Transparent" BorderThickness="0"
+                                         Foreground="{StaticResource TextBrush}" SelectionChanged="OnCandidateSelected"/>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- 待补验收（缺 accept 的叶子） -->
+                        <Border x:Name="panelPending" Margin="0,10,0,0"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Top" Text="待补验收（叶子缺 accept）" FontSize="12"
+                                               Foreground="#F0A13E" Margin="0,0,0,4"/>
+                                    <Button x:Name="btnFillDefault" Content="✓ 全部按 goal 补默认验收" FontSize="11" Height="26"
+                                            HorizontalAlignment="Left" Cursor="Hand" Click="OnFillDefaultAccept"
+                                            Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                                            BorderBrush="#7A8C9B" BorderThickness="1" Padding="8,0" Margin="0,2,0,6"/>
+                                </DockPanel>
+                                <TextBlock x:Name="tbPendingHint" FontSize="11" Foreground="{StaticResource TextBrush}"
+                                           TextWrapping="Wrap" Margin="0,0,0,6"/>
+                                <ItemsControl x:Name="lbPendingLeaves">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                <Ellipse Width="6" Height="6" Fill="#F0A13E" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding Title}" FontSize="11" Foreground="{StaticResource TextBrush}"
+                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 疑似跨节点改动点（勾选确需扩散） -->
+                        <Border x:Name="panelCrossNode" Margin="0,10,0,0" Visibility="Collapsed"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="#7A5C1A" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="疑似跨节点改动点（勾选确需扩散）" FontSize="12"
+                                           Foreground="#F0A13E" Margin="0,0,0,2"/>
+                                <TextBlock Text="勾选表示确需扩散到其他节点。目标节点不在本框填写（此时未必已建配置/任务），确认时先落待定占位（crossRefs.toNodeId=null）+ collectLog 记录，后续编排到目标节点时再补引用。"
+                                           FontSize="10" Foreground="{StaticResource DimBrush}" TextWrapping="Wrap" Margin="0,0,12,6"/>
+                                <StackPanel x:Name="lbCrossNode"/>   <!-- 代码后置按跨节点叶子逐行构建（勾选框） -->
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- 按钮 + 确认拦截提示 -->
+            <StackPanel Grid.Row="3" Margin="0,14,0,0">
+                <TextBlock x:Name="tbConfirmWarn" FontSize="11" Foreground="#E81123" TextWrapping="Wrap"
+                           HorizontalAlignment="Right" Margin="0,0,0,6"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="取消" Width="90" Height="34" Margin="0,0,10,0" Click="OnCancel"
+                            Style="{StaticResource DialogSecondaryBtn}"/>
+                    <Button x:Name="btnConfirm" Content="确认执行" Width="150" Height="34" Click="OnConfirm"
+                            Style="{StaticResource DialogPrimaryBtn}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

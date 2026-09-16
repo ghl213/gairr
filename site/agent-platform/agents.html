@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 广场 · Agent 平台</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+<style>
+ .agent-card{display:flex;flex-direction:column;gap:var(--sp-3);padding:var(--sp-4);height:100%;}
+ .agent-card> .btn-block{margin-top:auto;}
+ .agent-card> .row.mt-1{margin-top:auto;}
+ .agent-top{display:flex;gap:var(--sp-3);align-items:flex-start;}
+ .agent-ico{width:36px;height:36px;border-radius:var(--r-3);display:grid;place-items:center;font-family:var(--font-mono);font-size:13px;font-weight:700;flex:none;background:var(--brand-soft);color:var(--brand-ink);}
+ .agent-ico.v2{background:var(--violet-soft);color:var(--violet);}
+ .agent-ico.v3{background:var(--info-soft);color:var(--info);}
+ .agent-ico.v4{background:var(--accent-soft);color:var(--accent);}
+ .agent-ico.v5{background:var(--ok-soft);color:var(--ok);}
+ .agent-ico.v6{background:var(--warn-soft);color:var(--warn);}
+ .agent-ico.v7{background:var(--danger-soft);color:var(--danger);}
+ .scene-bar{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;padding:var(--sp-2) var(--sp-3);border:1px solid var(--line-2);border-radius:var(--r-3);background:var(--panel-2);}
+ .scene-bar .chip{cursor:pointer;}
+ .ex-q{display:flex;align-items:flex-start;gap:6px;font-size:var(--t-sm);color:var(--ink-3);cursor:pointer;padding:4px 0;}
+ .ex-q:hover{color:var(--brand-ink);}
+</style>
+</head>
+<body data-shell="user">
+
+<header class="utop">
+ <a class="utop-brand" href="chat.html"><span class="brand-mark">GA</span><span class="brand-name">Agent 平台</span></a>
+ <nav class="utop-nav" id="user-nav"></nav>
+ <div class="row gap-2">
+ <div class="input-icon nav-foot-meta" style="width:196px"><span data-ico="search"></span><input class="input input-sm" placeholder="搜索 Agent / 知识库"></div>
+ <button class="icon-btn" data-ico="bell" title="通知" data-demo="通知中心"><span class="dot">3</span></button>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">张</span><span class="t-sm nav-foot-meta">张三</span></button>
+ </div>
+</header>
+
+<main class="app-main">
+<div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">U-04 · Agent 广场</div>
+ <h1 class="h1 mt-2">可用 Agent</h1>
+ <p class="page-desc">挑一个 Agent 直接开聊。卡片上标注了它能读的知识库、能调用的工具，以及是否需要审批；点「示例问题」可一键带上上下文开新会话。<b>通用办公</b>类 Agent（会议纪要、客户跟进、内容文案、招聘初筛）面向 10 人以下小微团队的日常事务，开箱可用。其中「报价单收单比价智能体」面向<b>客户报价收单场景</b>（企微收单 → 归档 → 横向比价 → 加价出单），只展示你被授权的客户与轮次。</p>
+ </div>
+ <div class="page-actions">
+ <div class="seg" data-seg>
+ <button class="is-on">全部 11</button><button>我常用的 3</button><button>我创建的 1</button>
+ </div>
+ <button class="btn" data-ico="filter" data-demo="高级筛选">筛选</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="toolbar">
+ <div class="input-icon grow"><span data-ico="search"></span><input class="input" placeholder="按名称、能力或所属部门搜索"></div>
+ <button class="btn btn-sm" data-ico="refresh" data-demo="刷新列表">刷新</button>
+ </div>
+
+ <div class="scene-bar">
+ <span class="t-xs dim" style="letter-spacing:.08em">按场景</span>
+ <button class="chip is-on" data-demo="按场景筛选">全部 11</button>
+ <button class="chip" data-demo="筛出通用办公场景" data-ico="file">通用办公 · 5</button>
+ <button class="chip" data-demo="筛出客户报价收单场景" data-ico="file">客户场景 · 报价收单 1</button>
+ <button class="chip" data-demo="按场景筛选">知识问答 2</button>
+ <button class="chip" data-demo="按场景筛选">数据分析 1</button>
+ <button class="chip" data-demo="按场景筛选">流程审批 2</button>
+ <span class="grow"></span>
+ <span class="t-xs dim">通用办公 Agent 面向 10 人以下小微团队的日常事务；客户场景的 Agent 由管理员按客户授权，你只能看到自己负责的客户</span>
+ </div>
+
+ <div class="grid g-3">
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v7">价</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">报价单收单比价智能体</span><span class="tag tag-danger tag-mono">v3</span></div>
+ <span class="t-xs dim">供应链采购 · 客户场景 · 已发布 · 使用 6,410 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">企微/微信群自动收报价单并落盘归档，Excel 解析后生成多供应商横向比价表；加价出单低于毛利底线自动转人工审批。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">客户场景</span><span class="tag tag-outline">知识库 2</span><span class="tag tag-outline">工具 4</span><span class="tag tag-warn">加价出单需审批</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>第 34 轮比价里哪几家报价高于均价？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>恒昌的报价单表头没识别出来怎么处理？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>加价 8% 后整体毛利还剩多少？</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" onclick="location.href='chat.html'">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico">制</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">制度问答助手</span><span class="tag tag-brand tag-mono">v3</span></div>
+ <span class="t-xs dim">综合管理部 · 已发布 · 使用 1.2 万次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">回答公司制度类问题，回答必须给出条款引用，不确定时明确拒答并给出人工入口。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">知识问答</span><span class="tag tag-outline">知识库 2</span><span class="tag tag-outline">工具 3</span><span class="tag tag-ok">无需审批</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>差旅报销标准是多少？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>新供应商准入需要哪些材料？</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" onclick="location.href='chat.html'">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v2">数</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">数据分析 Agent</span><span class="tag tag-violet tag-mono">v2</span></div>
+ <span class="t-xs dim">信息技术部 · 已发布 · 使用 8,431 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">把自然语言转成 SQL 查数仓，自动画趋势图；导出明细属于写操作，需要你本人确认。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">数据分析</span><span class="tag tag-outline">数据源 4</span><span class="tag tag-outline">工具 6</span><span class="tag tag-warn">导出需审批</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>Q3 客户流失率按渠道拆一下</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>近 30 天设备点检异常趋势</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v3">法</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">法务审阅 Agent</span><span class="tag tag-info tag-mono">v4</span></div>
+ <span class="t-xs dim">法务部 · 已发布 · 使用 2,106 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">合同条款风险初筛，输出风险等级与修改建议；不输出法律意见结论，仅供内部参考。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">流程审批</span><span class="tag tag-outline">知识库 3</span><span class="tag tag-outline">工具 2</span><span class="tag tag-ok">仅读</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>付款条款有哪些风险点？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>帮我比对甲方模板与我们的标准模板</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v4">报</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">报销单预审 Agent</span><span class="tag tag-accent tag-mono">v1</span></div>
+ <span class="t-xs dim">财务部 · 灰度 30% · 使用 612 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">上传发票与行程单，自动校验标准、识别缺件；金额超限自动转人工复核。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">流程审批</span><span class="tag tag-outline">工具 5</span><span class="tag tag-warn">含写操作</span><span class="tag tag-violet">P1</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>这张发票能报吗？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>帮我检查这趟出差的缺件</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v5">HR</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">HR 助手</span><span class="tag tag-ok tag-mono">v2</span></div>
+ <span class="t-xs dim">人力资源部 · 已发布 · 使用 3,980 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">考勤、假期、证明开具流程咨询。涉及他人薪酬与绩效的问题一律拒答。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">知识问答</span><span class="tag tag-outline">客户服务</span><span class="tag tag-outline">知识库 2</span><span class="tag tag-outline">工具 2</span><span class="tag tag-ok">无需审批</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>年假怎么算？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>在职证明怎么开？</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v2">纪</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">会议纪要助手</span><span class="tag tag-violet tag-mono">v2</span></div>
+ <span class="t-xs dim">通用办公 · 综合管理部 · 已发布 · 使用 2,873 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">会议录音或文字速记转结构化纪要，自动抽出决议、待办与责任人；纪要对外发出前由你确认。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">通用办公</span><span class="tag tag-outline">知识库 1</span><span class="tag tag-outline">工具 3</span><span class="tag tag-ok">无需审批</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>把今天的周会记录整理成待办清单</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>上次会议的待办分别是谁负责？</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v5">客</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">客户跟进 Agent</span><span class="tag tag-accent tag-mono">v1</span></div>
+ <span class="t-xs dim">通用办公 · 销售部 · 已发布 · 使用 1,536 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">汇总客户往来记录与商机阶段，提醒久未联系的跟进节点，按你的话术风格生成跟进要点；对外发消息前需你确认。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">通用办公</span><span class="tag tag-outline">工具 4</span><span class="tag tag-warn">发消息需确认</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>哪些客户超过 14 天没联系了？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>给恒昌写一段复购跟进话术</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v6">文</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">内容文案助手</span><span class="tag tag-info tag-mono">v1</span></div>
+ <span class="t-xs dim">通用办公 · 市场部 · 已发布 · 使用 980 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">按品牌语气生成公众号、朋友圈与客户邮件文案，一次给多版草稿供挑选；不直接对外发布。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">通用办公</span><span class="tag tag-outline">知识库 2</span><span class="tag tag-outline">工具 2</span><span class="tag tag-ok">仅读</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>写一条新品上线的朋友圈文案</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>把这段产品说明改成客户邮件</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v4">招</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">招聘初筛 Agent</span><span class="tag tag-ok tag-mono">v1</span></div>
+ <span class="t-xs dim">通用办公 · 人力资源部 · 灰度 50% · 使用 407 次</span>
+ </div>
+ </div>
+ <p class="t-sm muted">解析简历并与岗位要求比对匹配度，输出初筛建议与面试问题清单；不自动淘汰候选人，最终由 HR 决定。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">通用办公</span><span class="tag tag-outline">工具 3</span><span class="tag tag-warn">含写操作</span><span class="tag tag-violet">P1</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">示例问题</div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>这份简历和岗位匹配度如何？</span></div>
+ <div class="ex-q" data-demo="以示例问题开聊"><span data-ico="chev"></span><span>生成 5 个技术面问题</span></div>
+ </div>
+ <button class="btn btn-primary btn-block mt-1" data-ico="message" data-demo="开始对话">开始对话</button>
+ </div>
+ </div>
+
+ <div class="card card-hover">
+ <div class="agent-card">
+ <div class="agent-top">
+ <span class="agent-ico v6">我</span>
+ <div class="col grow gap-1">
+ <div class="row-between"><span class="strong">我的周报助手</span><span class="tag tag-outline tag-mono">草稿</span></div>
+ <span class="t-xs dim">张三 创建 · 未发布 · 仅自己可见</span>
+ </div>
+ </div>
+ <p class="t-sm muted">拉取本周工单与提交记录，按模板生成周报草稿。尚未通过发布评审。</p>
+ <div class="row wrap gap-2">
+ <span class="tag tag-brand">通用办公</span><span class="tag tag-outline">工具 2</span><span class="tag tag-outline">草稿不对外</span>
+ </div>
+ <div class="col">
+ <div class="eyebrow" style="letter-spacing:.1em">下一步</div>
+ <div class="ex-q" data-demo="继续编辑草稿"><span data-ico="chev"></span><span>补齐提示词与工具授权</span></div>
+ <div class="ex-q" data-demo="提交发布评审"><span data-ico="chev"></span><span>提交发布评审</span></div>
+ </div>
+ <div class="row gap-2 mt-1">
+ <button class="btn grow" data-demo="继续编辑">继续编辑</button>
+ <button class="btn grow" data-demo="提交评审">提交评审</button>
+ </div>
+ </div>
+ </div>
+
+ </div>
+
+ <div class="section mt-6">
+ <div class="section-head"><span class="section-no">提示</span><span class="section-title">关于「谁能用哪个 Agent」</span><span class="rule"></span></div>
+ <div class="alert alert-info">
+ <span data-ico="shield"></span>
+ <div class="grow">广场上只展示你的角色可见的 Agent。若需要的 Agent 没出现在这里，可在 <a href="settings.html" style="text-decoration:underline">偏好与凭证</a> 里提交申请，管理员授权后即时可见。</div>
+ </div>
+ </div>
+
+</div>
+</main>
+
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

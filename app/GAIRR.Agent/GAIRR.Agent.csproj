@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>GAIRR.Agent</AssemblyName>
+    <RootNamespace>GAIRR</RootNamespace>
+    <Version>0.2.0</Version>
+    <Product>GAIRR Agent 引擎</Product>
+    <Description>GAIRR Agent 引擎：对话循环 / 四层检索 / 符号索引 / LSP / 工具，无界面依赖，可嵌入或服务化</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.1" />
+    <PackageReference Include="FastBertTokenizer" Version="1.0.28" />
+  </ItemGroup>
+
+  <!-- ONNX Runtime native DLL：复制到输出目录 runtimes/win-x64/native/；模型文件由 Models/ 目录 CopyToOutputDirectory -->
+  <ItemGroup>
+    <None Include="$(NuGetPackageRoot)Microsoft.ML.OnnxRuntime\1.18.1\runtimes\win-x64\native\*.dll" CopyToOutputDirectory="PreserveNewest" LinkBase="runtimes\win-x64\native\" Condition="Exists('$(NuGetPackageRoot)Microsoft.ML.OnnxRuntime\1.18.1\runtimes\win-x64\native')" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\models\*.onnx" CopyToOutputDirectory="PreserveNewest" LinkBase="models\" Condition="Exists('..\..\models')" />
+    <None Include="..\..\models\vocab.txt" CopyToOutputDirectory="PreserveNewest" LinkBase="models\" Condition="Exists('..\..\models\vocab.txt')" />
+  </ItemGroup>
+
+  <!-- 引擎仍引用 WPF 类型（Skills.cs 的 StatusBrush 状态色属性被 MainWindow XAML 绑定）——
+       仅引用程序集不启用 XAML 编译；后续专项把该属性迁出引擎后移除本引用 -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WPF" />
+  </ItemGroup>
+
+</Project>

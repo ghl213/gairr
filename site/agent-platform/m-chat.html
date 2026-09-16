@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>数据问答 · 微信报价单智能体</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body class="m-body">
+<div class="m-stage">
+
+ <aside class="m-side">
+  <div class="eyebrow">H-04 · 移动端原型</div>
+  <h1>问一句，<em>查表格</em></h1>
+  <p>对应需求 5–6：同一个智能体，手机端和电脑端看到同一份数据、同一条会话。回答必须带来源引用，点得回原始报价单，避免"AI 说多少就是多少"。</p>
+  <ul>
+   <li><b>范围</b><span>只读账号 + 表白名单，不允许通过对话改价、出单</span></li>
+   <li><b>引用</b><span>每条答案标注文件 / sheet / 行号 / 轮次</span></li>
+   <li><b>多端</b><span>手机 H5 与 PC 用户端共用会话与数据</span></li>
+  </ul>
+  <div class="m-links">
+   <a href="index.html">原型索引</a><a href="m-index.html">工作台</a><a href="m-intake.html">收单</a><a href="m-compare.html">比对</a><a href="m-pricing.html">出单</a><a href="m-logistics.html">物流</a>
+  </div>
+ </aside>
+
+ <div class="phone">
+  <div class="m-status"><span data-mtime>9:41</span><span>企微 · 5G · 100%</span></div>
+
+  <header class="m-top">
+   <a class="m-ibtn is-back" href="m-index.html" data-icon="chev"></a>
+   <div>
+    <div class="m-title">报价助手</div>
+    <div class="m-sub">已接入 68 项报价数据 · 第 34 轮</div>
+   </div>
+   <span class="m-spacer"></span>
+   <button class="m-ibtn" data-icon="clock" data-toast="历史会话：9 条（与 PC 端同源）"></button>
+   <button class="m-ibtn" data-icon="x" data-toast="演示：清空当前会话"></button>
+  </header>
+
+  <div class="m-scroll tight">
+   <div class="m-chat" id="chat">
+
+    <div class="m-bub me">GB/T 5782 M10×60 这轮谁最便宜？</div>
+
+    <div class="m-bub">
+     <b>恒昌标准件 0.79 元/个</b>，为第 34 轮最低价，交期 7 天；比次低的兴发（0.85）低 7.1%，比隆泰（0.92）低 14.1%。
+     <table class="m-mini">
+      <tr><th>供应商</th><th>单价</th><th>交期</th></tr>
+      <tr><td>恒昌标准件</td><td>0.79</td><td>7 天</td></tr>
+      <tr><td>兴发五金</td><td>0.85</td><td>7 天</td></tr>
+      <tr><td>三和五金</td><td>0.83</td><td>10 天</td></tr>
+      <tr><td>隆泰紧固件</td><td>0.92</td><td>12 天</td></tr>
+     </table>
+     <div class="m-src">来源：恒昌标准件_20260911.xlsx · sheet「报价单」第 14 行；隆泰紧固件_20260911 报价.pdf 第 2 页</div>
+    </div>
+
+    <div class="m-bub me">哪些料这轮涨价超过 5%？</div>
+
+    <div class="m-bub">
+     共 <b>2 项</b> 环比涨幅超过 5%：
+     <table class="m-mini">
+      <tr><th>数据项</th><th>本轮</th><th>上轮</th><th>涨幅</th></tr>
+      <tr><td>弹垫 M12</td><td>0.20</td><td>0.19</td><td>+10.5%</td></tr>
+      <tr><td>开口销 Φ4×32</td><td>0.16</td><td>0.15</td><td>+6.7%</td></tr>
+     </table>
+     GB/T 5782 M10×60 涨 4.1%，未达阈值。建议对弹垫启动议价或换供应商。
+     <div class="m-src">来源：第 34 轮对比表（4 家供应商 / 68 项）· 规则：环比涨 ≥5%</div>
+    </div>
+
+    <div class="m-bub me">开口销这轮三和报多少？</div>
+    <div class="m-bub">
+     三和五金报 <b>0.19 元/个</b>（交期 5 天），比最低价兴发（0.16）高 18.8%。隆泰数据异常：0.34 元且规格写 Φ4×30，已标记为规格冲突，未计入均价。
+     <div class="m-src">来源：三和五金_报价截图_0911.jpg（OCR 置信度 0.82，待确认）；人工确认后会自动修正</div>
+    </div>
+   </div>
+  </div>
+
+  <div class="m-quick">
+   <button data-toast="已发送：帮我列出三和缺报的数据项">三和缺报哪些项</button>
+   <button data-toast="已发送：按最低价口径汇总本轮能省的金额">本轮能省多少</button>
+   <button data-toast="已发送：把恒昌的完整报价明细发我">恒昌明细</button>
+  </div>
+
+  <div class="m-inputbar">
+   <button class="btn is-mic" data-icon="message" data-toast="语音提问（演示）：按住说话，松开转文字"></button>
+   <input class="input" id="q" placeholder="问报价数据，例如：5075 谁最便宜" style="flex:1">
+   <button class="m-send" id="send" data-icon="send" title="发送"></button>
+  </div>
+
+  <nav class="m-tab" id="m-tab"></nav>
+  <div class="m-scrim" id="m-scrim"></div>
+  <div class="m-toast" id="m-toast"></div>
+ </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script src="assets/mobile.js"></script>
+<script>
+/* 演示用：发送消息 → 按关键词给出带引用的回答（纯前端 mock，不请求后端） */
+(function () {
+  var chat = document.getElementById('chat');
+  var input = document.getElementById('q');
+  var btn = document.getElementById('send');
+  if (!chat || !input || !btn) return;
+
+  function put (html, me) {
+    var d = document.createElement('div');
+    d.className = 'm-bub' + (me ? ' me' : '');
+    d.innerHTML = html;
+    chat.appendChild(d);
+    d.scrollIntoView({ block: 'end' });
+  }
+  function type (html) {
+    var d = document.createElement('div');
+    d.className = 'm-bub';
+    d.innerHTML = '<span class="think">查询中…</span>';
+    chat.appendChild(d);
+    d.scrollIntoView({ block: 'end' });
+    setTimeout(function () { d.innerHTML = html; d.scrollIntoView({ block: 'end' }); }, 700);
+  }
+  function reply (text) {
+    if (text.indexOf('涨') >= 0) {
+      return type('本轮环比涨超 5% 的共 <b>2 项</b>：弹垫 M12（0.19 → 0.20，+10.5%）、开口销 Φ4×32（0.15 → 0.16，+6.7%）。' +
+        '<div class="m-src">来源：第 34 轮对比表 · 规则：环比涨 ≥5%</div>');
+    }
+    if (text.indexOf('缺报') >= 0) {
+      return type('三和五金本轮缺报 <b>1 项</b>：平垫圈 M8 304；兴发五金缺报 1 项：平垫圈 M8 304。' +
+        '<div class="m-src">来源：第 34 轮对比表 · 缺报项已生成催报消息草稿</div>');
+    }
+    if (text.indexOf('明细') >= 0 || text.indexOf('恒昌') >= 0) {
+      return type('恒昌标准件本轮回 88 项，其中 5 项为最低价。已生成明细文件。' +
+        '<div class="m-src">来源：恒昌标准件_20260911.xlsx（88 行 · 置信度 ≥0.95）</div>');
+    }
+    return type('按第 34 轮数据：<b>恒昌标准件</b>在本轮 12 项中报出最低价最多；如需具体型号，请带上型号或规格再问一次。' +
+      '<div class="m-src">来源：第 34 轮对比表（4 家供应商 / 68 项）· 只读查询</div>');
+  }
+  function send () {
+    var t = (input.value || '').trim();
+    if (!t) { window.mToast('请先输入问题，如「5075 谁最便宜」'); return; }
+    put(t, true);
+    input.value = '';
+    setTimeout(function () { reply(t); }, 350);
+  }
+  btn.addEventListener('click', send);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+})();
+</script>
+</body>
+</html>

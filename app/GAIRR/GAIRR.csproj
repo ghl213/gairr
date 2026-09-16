@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>GAIRR</AssemblyName>
+    <RootNamespace>GAIRR</RootNamespace>
+    <Version>0.2.0</Version>
+    <Product>GAIRR · 概尔工栈</Product>
+    <Description>GAIRR Agent 开发工具</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- app.ico 注册为 WPF 资源，供主窗口标题栏左上角 XAML 引用（ApplicationIcon 只决定 exe 图标） -->
+ <None Remove="app.ico" />
+ <Resource Include="app.ico" />
+ <!-- icon_src.png 注册为 WPF 资源：标题栏左上角头像直接引用原图，避免 app.ico 缩放发虚 -->
+ <Resource Include="icon_src.png" />
+ <None Update="config.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="skills\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="plugins\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="flows\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 提示词（工具级、与项目无关：工作模式/自动任务/编排/计划审查等）：打包进程序目录 prompts/，全项目共享、可热改 -->
+    <Content Include="prompts\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 自带插件运行时（envs\python\node\java，由 Core/RuntimeEnv.cs 使用）：随发布 exe 一并分发，
+         装好即免联网；改名避开 dotnet publish 自动生成的 runtimes\（ONNX 原生依赖目录） -->
+    <Content Include="envs\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 网页模型通道的站点适配脚本（WebModel/adapters/*.js）：随程序目录发布，站点改版时直接改脚本即可，无需重编译 -->
+    <Content Include="WebModel\adapters\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- UseWindowsForms 会隐式注入全局 using System.Drawing/System.Windows.Forms，
+       与 WPF 的 Brush/Size/Cursor 等类型冲突（CS0104），这里移除 -->
+  <ItemGroup>
+    <Using Remove="System.Drawing" />
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GAIRR.Agent\GAIRR.Agent.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,94 @@
+<!--
+  登录窗口（登录门禁）：360×520 无边框模态窗，深色主题；由 App 先显示主窗口后以 Owner=主窗口 模态弹出，叠于主窗口中心。
+  - WindowChrome 接管非客户区（CaptionHeight=0），标题行可拖动，右上角自绘关闭按钮；
+  - 布局自上而下：标题行 / 二维码占位区 / 账号密码 / 操作区按钮 / 错误提示条；
+  - 点【模拟登录成功】→ 校验账号非空后置 User 并 DialogResult=true，App 据此向主窗口注入登录用户；
+  - 点【取消】/ 关闭按钮 → DialogResult=false，App 关闭主窗口并退出。
+-->
+<Window x:Class="GAIRR.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="登录 GAIRR" Width="360" Height="520"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" WindowStyle="None"
+        Background="Transparent"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Microsoft YaHei, PingFang SC, sans-serif">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" CornerRadius="10"
+                      GlassFrameThickness="0"/>
+    </WindowChrome.WindowChrome>
+    <Border Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush2}"
+            BorderThickness="1" CornerRadius="10">
+        <Grid Margin="24,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题行：整行可按住拖动窗口，右侧自绘关闭按钮 -->
+            <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="OnTitleDrag">
+                <TextBlock Text="登录 GAIRR" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Content="✕" Width="28" Height="28" FontSize="12" Cursor="Hand"
+                        HorizontalAlignment="Right" ToolTip="关闭" Click="OnClose"
+                        Style="{StaticResource IconBtn}"/>
+            </Grid>
+
+            <!-- 二维码占位区：待接入扫码授权 -->
+            <Grid Grid.Row="1" Margin="0,20,0,0" HorizontalAlignment="Center">
+                <Border Width="200" Height="200" Background="{StaticResource CardBrush}"
+                        BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="10">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="⌗" FontSize="40" Foreground="{StaticResource CmtBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="扫码登录" FontSize="13" Margin="0,8,0,2"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="二维码占位 · 待接入扫码授权" FontSize="11"
+                                   Foreground="{StaticResource DimBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 账号/密码（演示预填） -->
+            <StackPanel Grid.Row="2" Margin="0,18,0,0">
+                <TextBlock Text="账号" FontSize="12" Foreground="{StaticResource DimBrush}"/>
+                <TextBox x:Name="txtUser" FontSize="13" Height="34" Padding="8,0"
+                         VerticalContentAlignment="Center" Margin="0,4,0,10"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                         BorderBrush="{StaticResource BorderBrush2}" CaretBrush="{StaticResource TextBrush}"
+                         TextChanged="OnInputChanged"/>
+                <TextBlock Text="密码" FontSize="12" Foreground="{StaticResource DimBrush}"/>
+                <PasswordBox x:Name="txtPwd" FontSize="13" Height="34" Padding="8,0"
+                             VerticalContentAlignment="Center" Margin="0,4,0,0"
+                             Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                             BorderBrush="{StaticResource BorderBrush2}"
+                             PasswordChanged="OnInputChanged"/>
+            </StackPanel>
+
+            <!-- 操作区按钮：取消 + 渐变主按钮 -->
+            <Grid Grid.Row="4" Margin="0,14,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="取消" Width="110" Height="34" FontSize="13" Cursor="Hand"
+                        Click="OnCancel" Background="{StaticResource CardBrush}"
+                        Foreground="{StaticResource TextBrush}" BorderBrush="{StaticResource BorderBrush2}"/>
+                <Button Grid.Column="1" Content="模拟登录成功" Height="34" FontSize="13" Cursor="Hand"
+                        Margin="10,0,0,0" Click="OnSimulateSuccess"
+                        Background="{StaticResource GradP12}" Foreground="White" BorderThickness="0"/>
+            </Grid>
+
+            <!-- 错误提示条：默认隐藏，校验失败时由后置代码显示 -->
+            <Border x:Name="errBar" Grid.Row="5" Margin="0,10,0,0" Padding="10,7"
+                    Background="#26F04E4E" CornerRadius="6" Visibility="Collapsed">
+                <TextBlock x:Name="errMsg" FontSize="12" Foreground="{StaticResource PauseBrush}"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

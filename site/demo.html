@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在线演示 - 和 GAIRR 聊一聊 | 概尔工栈</title>
+<meta name="description" content="GAIRR（概尔工栈）对话式演示：像这样把任务扔给它，备份、改码、编译、钉钉通知全自动。试试在下方输入一个任务。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-size='15' font-weight='bold' fill='%23fff' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #07070f;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #eef0f6;
+    --dim: #9aa0b4;
+    --p1: #6366f1;
+    --p2: #06b6d4;
+    --green: #3ecf8e;
+    --amber: #f0a13e;
+    --sans: "Microsoft YaHei", "PingFang SC", sans-serif;
+    --mono: Consolas, "Courier New", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-width: none; -ms-overflow-style: none; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.7; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+  a { text-decoration: none; }
+
+  /* 顶部菜单条（与首页/文档完全一致） */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+  header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); background: rgba(7, 7, 15, 0.7); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-size: 20px; font-weight: bold; letter-spacing: 1px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .logo-mark { display: inline-block; background: #000; color: #fff; font-weight: bold; padding: 3px 10px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(255,255,255,.18); font-size: 19px; line-height: 1.4; }
+  .logo span.cn { font-size: 13px; color: var(--dim); margin-left: 0; font-weight: normal; }
+  nav ul { display: flex; gap: 30px; list-style: none; }
+  nav ul a { color: var(--dim); font-size: 14px; padding: 6px 0; border-bottom: 2px solid transparent; }
+  nav ul a:hover { color: var(--text); }
+  nav ul a.cur { color: var(--text); border-bottom-color: var(--p1); }
+  .btn { display: inline-block; padding: 11px 28px; border-radius: 999px; font-size: 14px; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-main { background: linear-gradient(92deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 6px 24px rgba(99, 102, 241, .35); }
+
+  /* 三栏式布局：左侧任务历史 + 右侧对话区 */
+  .app { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 65px); }
+  .side { background: rgba(255,255,255,.02); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-width: 0; flex-shrink: 0; }
+  .side .brand { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+  .side .brand .logo { font-size: 18px; font-weight: bold; letter-spacing: 1px; display: flex; align-items: center; gap: 7px; }
+  .side .brand .logo .logo-mark { font-size: 15px; padding: 2px 8px; border-radius: 6px; }
+  .side .brand .logo .cn { font-size: 12px; color: var(--dim); font-weight: normal; letter-spacing: 0; margin-left: 0; }
+  .side .tabs { display: flex; gap: 4px; padding: 10px 12px 0; border-bottom: 1px solid var(--border); }
+  .side .tabs button { flex: 1; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--dim); font-size: 13px; padding: 7px 0 9px; cursor: pointer; font-family: var(--sans); }
+  .side .tabs button:hover { color: var(--text); }
+  .side .tabs button.cur { color: var(--text); border-bottom-color: var(--p1); }
+  .side .sess { padding: 14px 12px; flex: 1; overflow-y: auto; min-height: 0; overflow-x: hidden; }
+  .side .sess .t { font-size: 11px; color: var(--dim); letter-spacing: 2px; margin-bottom: 10px; padding: 0 6px; }
+  .side .sess .row { font-size: 13px; padding: 8px 12px; border-radius: 10px; color: var(--dim); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; border: 1px solid transparent; }
+  .side .sess .row .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .side .sess .row.cur { background: rgba(99,102,241,.12); border-color: rgba(99,102,241,.3); color: var(--text); }
+  .side .sess .row .sg { color: var(--dim); margin-left: auto; font-size: 11px; font-family: var(--mono); }
+  .side .tree { font-family: var(--mono); font-size: 12.5px; padding: 2px 6px; }
+  .side .tree .row { display: block; color: var(--dim); padding: 6px 8px; margin-bottom: 2px; white-space: nowrap; border: 0; border-radius: 0; background: transparent; }
+  .side .tree .row .fg { color: var(--p2); margin-right: 6px; }
+  .side .tree .row.l1 { padding-left: 24px; }
+  .side .tree .row.l2 { padding-left: 40px; }
+  .side .tree .row .cmt { color: #5b6172; margin-left: 6px; }
+  .proj-pick { padding: 10px 12px 6px; }
+  .proj-pick select { width: 100%; background: #14151f; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; font-family: var(--mono); outline: none; cursor: pointer; }
+  .proj-pick select:hover { border-color: var(--dim); }
+  .proj-pick select option { background: #14151f; color: var(--text); }
+  .side .foot { padding: 14px 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--dim); }
+  .side .foot a { color: var(--dim); }
+  .side .foot a:hover { color: var(--text); }
+  .side .foot .o { margin-top: 6px; }
+  .grad { background: linear-gradient(92deg, var(--p1), var(--p2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* 聊天主体 */
+  .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; width: 100%; }
+  .chat-head { padding: 14px 24px 10px; display: flex; justify-content: space-between; align-items: center; }
+  .chat-head .name { font-size: 15px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+  .chat-head .name .av { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--p1), #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
+  .chat-head .status { font-size: 12px; color: var(--dim); }
+  .chat-head .status b { color: var(--green); font-weight: normal; }
+  .model-pick { display: flex; align-items: center; gap: 4px; }
+  .model-pick .mlabel { font-size: 11px; color: var(--dim); margin-right: 4px; }
+  .model-pick button { background: transparent; border: 1px solid var(--border); color: var(--dim); font-size: 11.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer; font-family: var(--sans); }
+  .model-pick button:hover { color: var(--text); border-color: var(--dim); }
+  .model-pick button.cur { color: #fff; background: linear-gradient(135deg, var(--p1), #8b5cf6); border-color: transparent; }
+
+  .msgs { flex: 1; overflow-y: auto; padding: 18px 24px 10px; }
+  .msg { display: flex; gap: 12px; margin-bottom: 20px; }
+  .msg .av { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; background: #2b2d3a; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg.user .av { background: var(--p1); }
+  .msg.gairr .av { background: linear-gradient(135deg, var(--p1), #8b5cf6); }
+  .msg .body { max-width: 76%; }
+  .msg .who { font-size: 11px; color: var(--dim); margin-bottom: 5px; }
+  .msg.user .who { text-align: right; }
+  .msg .bubble { background: #14151f; border: 1px solid var(--border); padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.8; }
+  .msg.user .bubble { background: linear-gradient(135deg, rgba(99,102,241,.75), rgba(99,102,241,.55)); border-color: transparent; border-top-right-radius: 4px; }
+  .msg.gairr .bubble { border-top-left-radius: 4px; }
+  .bubble .cmd { font-family: var(--mono); font-size: 12.5px; color: var(--amber); white-space: pre-wrap; }
+  .bubble .step { font-family: var(--mono); font-size: 12.5px; color: var(--dim); white-space: pre-wrap; padding: 8px 12px; background: rgba(0,0,0,.25); border-radius: 8px; margin-top: 8px; }
+  .bubble .step .ok { color: var(--green); }
+  .bubble .step .wr { color: var(--amber); }
+
+  .tools { margin-top: 10px; }
+  .tools details { background: rgba(0,0,0,.25); border: 1px solid var(--border); border-radius: 8px; margin-top: 6px; overflow: hidden; }
+  .tools summary { cursor: pointer; padding: 9px 14px; font-family: var(--mono); font-size: 12.5px; color: var(--text); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .tools summary:hover { background: rgba(255,255,255,.04); }
+  .tools summary .s { color: var(--dim); font-size: 11px; }
+  .tools .inner { padding: 10px 14px; font-family: var(--mono); font-size: 12px; color: var(--dim); border-top: 1px solid var(--border); white-space: pre-wrap; line-height: 1.7; }
+
+  .typing { display: inline-flex; gap: 5px; padding: 14px 16px; }
+  .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--dim); animation: tp 1.2s infinite; }
+  .typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+  @keyframes tp { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+
+  /* 输入区 */
+  .input-area { padding: 14px 24px 22px; flex-shrink: 0; }
+  .input-box { display: flex; align-items: flex-end; gap: 12px; background: #14151f; border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; }
+  .input-box:focus-within { border-color: var(--p1); }
+  .input-box textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; color: var(--text); font-size: 14px; font-family: var(--sans); line-height: 1.6; max-height: 120px; }
+  .send-btn { background: linear-gradient(135deg, var(--p1), var(--p2)); border: none; color: #fff; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 17px; flex-shrink: 0; }
+  .send-btn:hover { opacity: .9; }
+  .input-hint { font-size: 12px; color: var(--dim); margin-top: 10px; text-align: center; }
+
+  @media (max-width: 800px) {
+    nav ul { display: none; }
+    .app { grid-template-columns: 1fr; }
+    .side { display: none; }
+    .msg .body { max-width: 88%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><span class="logo-mark">GAIRR</span><span class="cn">概尔工栈</span></div>
+      <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="docs.html">文档</a></li>
+        <li><a class="cur" href="demo.html">演示</a></li>
+      </ul>
+      <a class="btn btn-main" href="index.html#download">获取 GAIRR</a>
+    </nav>
+  </div>
+</header>
+
+<div class="app">
+  <div class="side">
+    <div class="brand">
+      <div class="logo"><span class="logo-mark">GAIRR</span><span class="cn">Agent 开发工具</span></div>
+    </div>
+    <div class="proj-pick">
+      <select id="proj-sel">
+        <option value="myproject">GAIRR · d:\myproject</option>
+        <option value="gsfx">GSFX · d:\work\gsfx</option>
+        <option value="gairr">官网站 · d:\work\gairr</option>
+      </select>
+    </div>
+    <div class="tabs">
+      <button class="cur" data-p="dir">项目</button>
+      <button data-p="task">任务</button>
+      <button data-p="history">历史</button>
+      <button data-p="skill">技能</button>
+    </div>
+    <div class="sess" id="p-dir">
+      <div class="t" id="p-path">项目 · d:\myproject</div>
+      <div class="tree" id="p-tree"></div>
+    </div>
+    <div class="sess" id="p-task" hidden>
+      <div class="t">自动化任务</div>
+      <div class="row cur"><span class="dot"></span>批量转码 + 编译验证</div>
+      <div class="row"><span class="dot"></span>生成 50 条测试数据</div>
+      <div class="row"><span class="dot"></span>巡检并汇报磁盘状态</div>
+      <div class="t" style="margin-top:16px;">未实现的想法</div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>代码审查机器人</div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>自动补 REST 接口文档</div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>影像备份巡航</div>
+    </div>
+    <div class="sess" id="p-history" hidden>
+      <div class="t">对话管理</div>
+      <div class="row cur"><span class="dot"></span>修复登录超时</div>
+      <div class="row"><span class="dot"></span>配置 Skill 目录</div>
+      <div class="row"><span class="dot"></span>首次运行设置向导</div>
+    </div>
+    <div class="sess" id="p-skill" hidden>
+      <div class="t">Agent 管理</div>
+      <div class="row cur"><span class="dot"></span>主 Agent <span class="sg">50 轮循环</span></div>
+      <div class="row"><span class="dot" style="background:var(--p1);"></span>子 Agent · 代码审查 <span class="sg">只读</span></div>
+      <div class="t" style="margin-top:16px;">Skill 库 · SKILL.md</div>
+      <div class="row"><span class="dot"></span>pdf-form-filler <span class="sg">已加载</span></div>
+      <div class="row"><span class="dot"></span>git-commit-agent <span class="sg">已加载</span></div>
+      <div class="row"><span class="dot"></span>db-schema-inspector <span class="sg">已加载</span></div>
+      <div class="t" style="margin-top:16px;">内置技能 · 框架级</div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>任务级备份 <span class="sg">强制</span></div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>钉钉通知 <span class="sg">强制</span></div>
+      <div class="row"><span class="dot" style="background:var(--amber);"></span>危险命令拦截 <span class="sg">强制</span></div>
+    </div>
+    <div class="foot">
+      <div>© <span id="year">2026</span> 概尔工栈 GAIRR · gairr.com</div>
+      <div class="o"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2021003872号-1</a></div>
+    </div>
+  </div>
+
+  <div class="chat">
+  <div class="chat-head">
+    <div class="name"><div class="av">G</div>GAIRR Agent<span class="status">● <b id="m-status">在线 · 百炼 Qwen-Max</b> · 交互演示 · v0.1.0-dev</span></div>
+    <div class="model-pick">
+      <span class="mlabel">模型</span>
+      <button class="cur" data-m="百炼 Qwen-Max">百炼</button>
+      <button data-m="Kimi moonshot">Kimi</button>
+      <button data-m="本地 Ollama">本地</button>
+    </div>
+  </div>
+
+  <div class="msgs" id="msgs">
+    <div class="msg gairr">
+      <div class="av">G</div>
+      <div class="body">
+        <div class="who">GAIRR AGENT</div>
+        <div class="bubble">你好，我是运行在你电脑上的 GAIRR Agent。
+改文件、跑命令、查数据库、发钉钉……把任务交给我就行。下面是一段我干活时的真实样子 👇<br><span style="font-size:12px;color:var(--dim);">（本页为模拟演示，欢迎在下方输入框亲测交互效果）</span></div>
+      </div>
+    </div>
+
+    <div class="msg user">
+      <div class="av">你</div>
+      <div class="body">
+        <div class="who">你（2026-08-15 14:00）</div>
+        <div class="bubble">把 src 下所有源码转为 UTF-8，然后跑一遍编译验证</div>
+      </div>
+    </div>
+
+    <div class="msg gairr">
+      <div class="av">G</div>
+      <div class="body">
+        <div class="who">GAIRR AGENT</div>
+        <div class="bubble">
+          <div class="cmd">[14:00] 任务启动 · 已备份 src/ 下 50 个文件（任务级备份）</div>
+          <div class="tools">
+            <details open>
+              <summary>Read src/EncodingUtil.pas <span class="s">✓ 1.2s</span></summary>
+              <div class="inner">编码探测：UTF-8 无 BOM · 342 行 · 前 60 行已返回</div>
+            </details>
+            <details>
+              <summary>Write src/Login.pas <span class="s">✓ 0.4s</span></summary>
+              <div class="inner">UTF-8 无 BOM 写入 · 回读校验通过 · 已记 changelog</div>
+            </details>
+            <details>
+              <summary>Bash: dcc32 compile <span class="s" style="color:var(--amber);">✗ 编译失败</span></summary>
+              <div class="inner">错误：Utils.pas(88) 标识符未声明 → 已自动发起修复（第 2 轮）</div>
+            </details>
+            <details open>
+              <summary>Edit src/Utils.pas <span class="s">✓ 修复完成</span></summary>
+              <div class="inner">补充缺失声明 · 精确替换 1 处 · 备份：back/src_Utils.pas_260815_140200</div>
+            </details>
+          </div>
+          <div class="step"><span class="ok">[14:09] 全部完成 · 50/50 · 编译通过</span>
+<span class="ok">[14:09] 已发送钉钉通知 · 用量：12 轮 · 8.4k tokens</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-box">
+      <textarea id="input" rows="1" placeholder="输入一个任务，看看 GAIRR 怎么接活……"></textarea>
+      <button class="send-btn" id="send">➤</button>
+    </div>
+    <div class="input-hint">演示站为模拟响应 · 真实版本：Windows 本地运行 · 自带模型 Key · <a href="index.html#download">即将上线</a></div>
+  </div>
+</div>
+
+<script>
+  var msgs = document.getElementById('msgs');
+  var input = document.getElementById('input');
+  var send = document.getElementById('send');
+
+  /* 项目切换：多项目文件树 */
+  var trees = {
+    myproject: {
+      path: 'd:\\myproject',
+      html: '<div class="row"><span class="fg">▸</span> src/</div>' +
+        '<div class="row l1"><span class="fg">▸</span> Core/ <span class="cmt">LLMClient · AgentLoop</span></div>' +
+        '<div class="row l1"><span class="fg">▸</span> Tools/ <span class="cmt">Read · Write · Edit</span></div>' +
+        '<div class="row l1"><span class="fg">▸</span> Skills/ <span class="cmt">SkillLoader</span></div>' +
+        '<div class="row l1"><span class="fg">▸</span> UI/ <span class="cmt">三栏界面</span></div>' +
+        '<div class="row"><span class="fg">▸</span> tests/</div>' +
+        '<div class="row l1"><span class="fg">▸</span> fixture 回归集</div>' +
+        '<div class="row"><span class="fg">·</span> config.ini</div>' +
+        '<div class="row"><span class="fg">·</span> GAIRR.dpr</div>'
+    },
+    gsfx: {
+      path: 'd:\\work\\gsfx',
+      html: '<div class="row"><span class="fg">▸</span> src/</div>' +
+        '<div class="row l1"><span class="fg">▸</span> Forms/ <span class="cmt">Main.pas · Login.pas</span></div>' +
+        '<div class="row l1"><span class="fg">▸</span> Data/ <span class="cmt">连接池 · 缓存</span></div>' +
+        '<div class="row l1"><span class="fg">▸</span> Modules/ <span class="cmt">订单 · 会员</span></div>' +
+        '<div class="row"><span class="fg">▸</span> bin/</div>' +
+        '<div class="row"><span class="fg">·</span> config.ini</div>' +
+        '<div class="row"><span class="fg">·</span> GSFX.dpr</div>'
+    },
+    gairr: {
+      path: 'd:\\work\\gairr',
+      html: '<div class="row"><span class="fg">▸</span> site/ <span class="cmt">官网三页</span></div>' +
+        '<div class="row l1"><span class="fg">·</span> index.html</div>' +
+        '<div class="row l1"><span class="fg">·</span> docs.html</div>' +
+        '<div class="row l1"><span class="fg">·</span> demo.html</div>' +
+        '<div class="row"><span class="fg">▸</span> doc/ <span class="cmt">GAIRR开发方案.md</span></div>' +
+        '<div class="row"><span class="fg">▸</span> back/ <span class="cmt">备份区</span></div>'
+    }
+  };
+  function renderTree(pid) {
+    var p = trees[pid];
+    document.getElementById('p-path').textContent = '项目 · ' + p.path;
+    document.getElementById('p-tree').innerHTML = p.html;
+  }
+  var projSel = document.getElementById('proj-sel');
+  projSel.addEventListener('change', function () {
+    renderTree(projSel.value);
+    /* 切换后自动激活「项目」标签，直接显示对应目录结构 */
+    tabs.forEach(function (x) { x.classList.remove('cur'); });
+    document.querySelector('.side .tabs [data-p="dir"]').classList.add('cur');
+    ['dir', 'task', 'history', 'skill'].forEach(function (p) {
+      document.getElementById('p-' + p).hidden = (p !== 'dir');
+    });
+  });
+  renderTree('myproject');
+
+  /* 左侧栏标签页切换：目录 / 任务 / 历史 */
+  var tabs = document.querySelectorAll('.side .tabs button');
+  tabs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      tabs.forEach(function (x) { x.classList.remove('cur'); });
+      b.classList.add('cur');
+      ['dir', 'task', 'history', 'skill'].forEach(function (p) {
+        document.getElementById('p-' + p).hidden = (p !== b.getAttribute('data-p'));
+      });
+    });
+  });
+
+  /* 模型选择：百炼 / Kimi / 本地 */
+  var curModel = '百炼 Qwen-Max';
+  var modelBtns = document.querySelectorAll('.model-pick button');
+  modelBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      modelBtns.forEach(function (x) { x.classList.remove('cur'); });
+      b.classList.add('cur');
+      curModel = b.getAttribute('data-m');
+      document.getElementById('m-status').innerHTML = '在线 · ' + curModel;
+      addMsg('gairr', '<div class="cmd">[切换] 已切换到 ' + curModel + '，以下任务由它执行</div>');
+    });
+  });
+
+  function autoGrow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; }
+  input.addEventListener('input', autoGrow);
+
+  function addMsg(kind, html) {
+    var d = document.createElement('div');
+    d.className = 'msg ' + kind;
+    var av = kind === 'user' ? '你' : 'G';
+    d.innerHTML = '<div class="av">' + av + '</div><div class="body"><div class="who">' + (kind === 'user' ? '你（刚才）' : 'GAIRR AGENT · ' + curModel) + '</div><div class="bubble">' + html + '</div></div>';
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function addTyping() {
+    var d = document.createElement('div');
+    d.className = 'msg gairr';
+    d.innerHTML = '<div class="av">G</div><div class="body"><div class="who">GAIRR AGENT</div><div class="typing"><i></i><i></i><i></i></div></div>';
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d;
+  }
+
+  var demoReplies = [
+    '<div class="cmd">[现在] 任务启动 · 已做任务级备份</div>' +
+    '<div class="tools"><details open><summary>Bash: compile <span class="s">✓ 2.3s</span></summary><div class="inner">编译通过 · 0 错误 0 警告</div></details></div>' +
+    '<div class="step"><span class="ok">[完成] 处理完毕 · 已发钉钉通知 · 3 轮 · 1.2k tokens</span></div>',
+    '<div class="cmd">[现在] 开始处理，先看看项目结构</div>' +
+    '<div class="tools"><details open><summary>ListDir ./ <span class="s">✓ 0.1s</span></summary><div class="inner">src/ · tests/ · config.ini · README.md（23 项）</div></details></div>' +
+    '<div class="step"><span class="ok">[完成] 确认无风险，等你给出确定命令/批准后执行 · 已通知你</span></div>',
+    '<div class="cmd">[现在] 收到，这个操作有风险，先征求你确认</div>' +
+    '<div class="tools"><details open><summary>Bash: del /q *.tmp <span class="s" style="color:var(--amber);">⚠ 需确认</span></summary><div class="inner">危险命令模式命中：del · 已拦截，等待你在界面上批准</div></details></div>' +
+    '<div class="step"><span class="wr">[暂停] 等待批准 · 未执行任何删改</span></div>'
+  ];
+
+  send.addEventListener('click', function () {
+    var v = input.value.trim();
+    if (!v) return;
+    addMsg('user', '<span class="cmd" style="color:var(--text);white-space:pre-wrap;">' + v.replace(/</g, '&lt;') + '</span>');
+    input.value = ''; input.style.height = 'auto';
+    var t = addTyping();
+    setTimeout(function () {
+      t.remove();
+      addMsg('gairr', demoReplies[Math.floor(Math.random() * demoReplies.length)]);
+    }, 1400);
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send.click(); }
+  });
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

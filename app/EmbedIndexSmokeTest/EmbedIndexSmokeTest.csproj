@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>EmbedIndexSmokeTest</AssemblyName>
+    <RootNamespace>GAIRR</RootNamespace>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.1" />
+    <PackageReference Include="FastBertTokenizer" Version="1.0.28" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GAIRR.Agent\GAIRR.Agent.csproj" />
+  </ItemGroup>
+
+  <!-- ONNX Runtime native DLL：复制到输出目录 runtimes/win-x64/native/；模型文件由 Models/ 目录 CopyToOutputDirectory -->
+  <ItemGroup>
+    <None Include="$(NuGetPackageRoot)Microsoft.ML.OnnxRuntime\1.18.1\runtimes\win-x64\native\*.dll" CopyToOutputDirectory="PreserveNewest" LinkBase="runtimes\win-x64\native\" Condition="Exists('$(NuGetPackageRoot)Microsoft.ML.OnnxRuntime\1.18.1\runtimes\win-x64\native')" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\models\*.onnx" CopyToOutputDirectory="PreserveNewest" LinkBase="models\" Condition="Exists('..\..\models')" />
+    <None Include="..\..\models\vocab.txt" CopyToOutputDirectory="PreserveNewest" LinkBase="models\" Condition="Exists('..\..\models\vocab.txt')" />
+  </ItemGroup>
+
+</Project>

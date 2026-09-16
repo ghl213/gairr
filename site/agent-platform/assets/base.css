@@ -1,0 +1,174 @@
+/* ============================================================
+ base.css · Agent 平台静态原型
+ 设计令牌 / 重置 / 排版 / 双主题
+ 视觉语汇：石墨底 + 深青主色 + 琥珀风险色；等宽字体承担编号与数据
+ ============================================================ */
+
+:root{
+ /* —— 色板（亮） —— */
+ --canvas:#F5F6F4;
+ --panel:#FFFFFF;
+ --panel-2:#FAFBFA;
+ --panel-3:#F0F2F1;
+ --ink:#101720;
+ --ink-2:#39434F;
+ --ink-3:#6C7684;
+ --ink-4:#9AA3AE;
+ --line:#D9DEE2;
+ --line-2:#EAEDEF;
+
+ --brand:#0B5C6B;
+ --brand-ink:#074A56;
+ --brand-soft:#E1EFF0;
+ --accent:#C64F1E;
+ --accent-soft:#FBE8DF;
+
+ --ok:#2A7355;
+ --ok-soft:#E2F1E9;
+ --warn:#9E6E14;
+ --warn-soft:#FAEFD8;
+ --danger:#AD352A;
+ --danger-soft:#FAE6E3;
+ --info:#2A5AAE;
+ --info-soft:#E5EDFA;
+ --violet:#5B4B9E;
+ --violet-soft:#ECE9F8;
+
+ --shadow-1:0 1px 2px rgba(16,23,32,.06);
+ --shadow-2:0 6px 20px rgba(16,23,32,.10);
+ --shadow-3:0 18px 48px rgba(16,23,32,.18);
+
+ /* —— 字体 —— */
+ --font-sans:"Inter","PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+ --font-mono:ui-monospace,"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+
+ /* —— 尺度 —— */
+ --t-xs:11px; --t-sm:12px; --t-md:13px; --t-base:14px;
+ --t-lg:16px; --t-xl:20px; --t-2xl:26px; --t-3xl:34px;
+
+ --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+ --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:56px;
+
+ --r-1:3px; --r-2:5px; --r-3:8px; --r-4:12px;
+ --ctl-h:32px; --ctl-h-sm:26px; --ctl-h-lg:40px;
+
+ --nav-w:236px; --nav-w-collapsed:60px; --top-h:52px;
+
+ color-scheme:light;
+}
+
+html[data-theme="dark"]{
+ --canvas:#0D1116;
+ --panel:#141A21;
+ --panel-2:#181F27;
+ --panel-3:#1E262F;
+ --ink:#E7ECF1;
+ --ink-2:#B4BEC9;
+ --ink-3:#808C99;
+ --ink-4:#5C6773;
+ --line:#28313B;
+ --line-2:#1F272F;
+
+ --brand:#3FA8B8;
+ --brand-ink:#5CBECC;
+ --brand-soft:#12313A;
+ --accent:#E77A46;
+ --accent-soft:#3A2318;
+
+ --ok:#4CAF86;
+ --ok-soft:#14301F;
+ --warn:#D6A544;
+ --warn-soft:#332A15;
+ --danger:#E0705F;
+ --danger-soft:#361C18;
+ --info:#6C9BE8;
+ --info-soft:#182741;
+ --violet:#9B8BE0;
+ --violet-soft:#241F3A;
+
+ --shadow-1:0 1px 2px rgba(0,0,0,.4);
+ --shadow-2:0 6px 20px rgba(0,0,0,.45);
+ --shadow-3:0 18px 48px rgba(0,0,0,.6);
+
+ color-scheme:dark;
+}
+
+/* —— 重置 —— */
+*,::before,::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+ margin:0;
+ font-family:var(--font-sans);
+ font-size:var(--t-base);
+ line-height:1.55;
+ color:var(--ink);
+ background:var(--canvas);
+ -webkit-font-smoothing:antialiased;
+ text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4,h5,p,figure,blockquote,dl,dd{margin:0;}
+ul,ol{margin:0;padding:0;list-style:none;}
+img,svg{display:block;max-width:100%;}
+button,input,select,textarea{font:inherit;color:inherit;}
+button{background:none;border:none;padding:0;cursor:pointer;}
+a{color:inherit;text-decoration:none;}
+table{border-collapse:collapse;border-spacing:0;width:100%;}
+
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-1);}
+::selection{background:var(--brand-soft);color:var(--ink);}
+
+/* —— 滚动条 —— */
+*::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--line);border:3px solid transparent;background-clip:content-box;border-radius:99px;}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-4);background-clip:content-box;}
+
+/* —— 排版原子 —— */
+.h1{font-size:var(--t-2xl);font-weight:640;letter-spacing:-.02em;line-height:1.2;}
+.h2{font-size:var(--t-xl);font-weight:620;letter-spacing:-.015em;line-height:1.25;}
+.h3{font-size:var(--t-lg);font-weight:600;letter-spacing:-.01em;}
+.h4{font-size:var(--t-base);font-weight:600;}
+
+/* 眉标：等宽小字 + 字距，用于页面域标识 */
+.eyebrow{
+ font-family:var(--font-mono);
+ font-size:var(--t-xs);
+ font-weight:500;
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ color:var(--brand);
+}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+.muted{color:var(--ink-3);}
+.dim{color:var(--ink-4);}
+.t-xs{font-size:var(--t-xs);} .t-sm{font-size:var(--t-sm);}
+.t-lg{font-size:var(--t-lg);} .t-xl{font-size:var(--t-xl);}
+.strong{font-weight:600;}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* —— 布局原子 —— */
+.row{display:flex;align-items:center;}
+.row-gap{gap:var(--sp-2);}
+.row-between{display:flex;align-items:center;justify-content:space-between;}
+.col{display:flex;flex-direction:column;}
+.wrap{flex-wrap:wrap;}
+.grow{flex:1;min-width:0;}
+.gap-1{gap:var(--sp-1);} .gap-2{gap:var(--sp-2);} .gap-3{gap:var(--sp-3);}
+.gap-4{gap:var(--sp-4);} .gap-5{gap:var(--sp-5);} .gap-6{gap:var(--sp-6);}
+.mt-1{margin-top:var(--sp-1);} .mt-2{margin-top:var(--sp-2);} .mt-3{margin-top:var(--sp-3);}
+.mt-4{margin-top:var(--sp-4);} .mt-5{margin-top:var(--sp-5);} .mt-6{margin-top:var(--sp-6);}
+.mb-2{margin-bottom:var(--sp-2);} .mb-3{margin-bottom:var(--sp-3);} .mb-4{margin-bottom:var(--sp-4);}
+.hide{display:none !important;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+/* —— 无障碍与动效 —— */
+@media (prefers-reduced-motion:reduce){
+ *,::before,::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+}
+
+/* —— 打印 —— */
+@media print{
+ .app-nav,.app-top,.no-print{display:none !important;}
+ body{background:#fff;}
+}

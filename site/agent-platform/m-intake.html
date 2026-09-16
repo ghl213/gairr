@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>收单归档 · 微信报价单智能体</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body class="m-body">
+<div class="m-stage">
+
+ <aside class="m-side">
+  <div class="eyebrow">H-02 · 移动端原型</div>
+  <h1>微信收单<em>与归档</em></h1>
+  <p>对应需求 1–3：从微信群/单聊自动收取报价单文件，落盘到指定业务工作目录，随即进入解析流水线；格式识别不了的先转人工确认，保证一条不丢。</p>
+  <ul>
+   <li><b>通道</b><span>可插拔双通道：企微会话存档（自动）/ 群机器人（半自动）＋ 手机上传（兜底）</span></li>
+   <li><b>归档</b><span>服务器目录为真源：客户 / 年月 / 供应商 / 原始，文件名规范化；按需单向同步只读副本到客户共享盘</span></li>
+   <li><b>解析（P0）</b><span>Excel 为主（实测占比 ≥80%）：xlsx/xls 读表 → 表头映射 → 行项目抽取；PDF/图片 OCR 后移 P1</span></li>
+   <li><b>去重</b><span>文件哈希幂等，重复文件自动跳过</span></li>
+   <li><b>可追溯</b><span>每份文件记录来源群、发送人、消息时间</span></li>
+  </ul>
+  <div class="m-links">
+   <a href="index.html">原型索引</a><a href="m-index.html">工作台</a><a href="m-compare.html">比对</a><a href="m-chat.html">问答</a><a href="m-pricing.html">出单</a><a href="m-logistics.html">物流</a>
+  </div>
+ </aside>
+
+ <div class="phone">
+  <div class="m-status"><span data-mtime>9:41</span><span>企微 · 5G · 100%</span></div>
+
+  <header class="m-top">
+   <a class="m-ibtn is-back" href="m-index.html" data-icon="chev"></a>
+   <div>
+    <div class="m-title">收单归档</div>
+    <div class="m-sub">今日 12 份 · 待确认 1 · 待 P1 解析 2 · 失败 1</div>
+   </div>
+   <span class="m-spacer"></span>
+   <button class="m-ibtn" data-icon="refresh" data-toast="已重新同步报价群：无新文件"></button>
+   <button class="m-ibtn" data-icon="filter" data-toast="筛选：按供应商 / 时间 / 状态"></button>
+  </header>
+
+  <div class="m-scroll">
+
+   <div class="m-card">
+    <div class="m-card-h">
+     <span class="m-ico is-wx" data-icon="message"></span>
+     <div><div class="t">供应商报价群</div><div class="s">企业微信 · 会话存档已连接</div></div>
+     <span class="m-spacer"></span>
+     <span class="tag tag-ok"><span class="td"></span>自动收单中</span>
+    </div>
+    <div class="m-card-b">
+     <div class="field" style="margin-bottom:8px">
+      <label>归档目录（服务器真源）</label>
+      <div class="val">D:\agent-data\报价单\甲客户\2026-09\{供应商}\原始\</div>
+      <div class="ms" style="margin-top:4px">同步副本 → \\nas\业务\报价单\（只读，供客户直接翻文件）</div>
+     </div>
+     <div class="m-bar"><i style="width:100%"></i></div>
+     <div class="ms" style="margin-top:6px">最近同步 09:36 · 去重命中 3 份 · 归档成功率 100%</div>
+    </div>
+   </div>
+
+   <div class="m-note is-info" data-icon="file">P0 解析范围：客户报价单 <b>Excel 为主（实测占比 ≥80%）</b>，xlsx/xls 走自动解析；文本 PDF 与图片 OCR 整体后移 P1，P0 先归档不解析，可先手工录入。</div>
+
+   <div class="m-sec"><span>今日文件</span><span class="rule"></span><span class="cap">12 份</span></div>
+
+   <div class="m-chips" data-chips="status">
+    <button class="is-on" data-val="全部">全部</button>
+    <button data-val="待确认">待确认 1</button>
+    <button data-val="已解析">已解析 2</button>
+    <button data-val="待P1解析">待 P1 解析 2</button>
+    <button data-val="失败">失败 1</button>
+   </div>
+
+   <div class="m-card">
+    <div class="m-row" data-status="待确认" data-sheet-open="sheet-parse">
+     <span class="m-ico is-warn" data-icon="file"></span>
+     <span>
+      <span class="mn">兴发五金_20260911_报价单_v2.xlsx</span>
+      <span class="ms">09:36 · 46 KB · 表头「料号」未识别，置信度 0.72</span>
+     </span>
+     <span class="mr"><span class="tag tag-warn"><span class="td"></span>待确认</span></span>
+    </div>
+
+    <div class="m-row" data-status="已解析" data-sheet-open="sheet-parse">
+     <span class="m-ico is-wx" data-icon="check"></span>
+     <span>
+      <span class="mn">恒昌标准件_20260911.xlsx</span>
+      <span class="ms">09:32 · 38 KB · 已解析 88 项，全部字段置信度 ≥0.95</span>
+     </span>
+     <span class="mr"><span class="tag tag-ok"><span class="td"></span>已解析</span></span>
+    </div>
+
+    <div class="m-row" data-status="待P1解析" data-sheet-open="sheet-p1">
+     <span class="m-ico is-info" data-icon="file"></span>
+     <span>
+      <span class="mn">隆泰紧固件_20260911 报价.pdf</span>
+      <span class="ms">09:30 · 210 KB · 文本型 PDF · P0 不解析，待 P1 上线（可先手工录入）</span>
+     </span>
+     <span class="mr"><span class="tag tag-info"><span class="td"></span>待 P1 解析</span></span>
+    </div>
+
+    <div class="m-row" data-status="待P1解析" data-sheet-open="sheet-p1">
+     <span class="m-ico is-info" data-icon="file"></span>
+     <span>
+      <span class="mn">三和五金_报价截图_0911.jpg</span>
+      <span class="ms">09:28 · 1.2 MB · 图片 · OCR 后移 P1，P0 不解析（可先手工录入）</span>
+     </span>
+     <span class="mr"><span class="tag tag-info"><span class="td"></span>待 P1 解析</span></span>
+    </div>
+
+    <div class="m-row" data-status="已解析" data-sheet-open="sheet-parse">
+     <span class="m-ico" data-icon="file"></span>
+     <span>
+      <span class="mn">兴发五金_20260910.xlsx</span>
+      <span class="ms">昨天 17:42 · 44 KB · 历史轮次第 33 轮</span>
+     </span>
+     <span class="mr"><span class="tag tag-ok"><span class="td"></span>已归档</span></span>
+    </div>
+
+    <div class="m-row" data-status="失败">
+     <span class="m-ico is-danger" data-icon="alert"></span>
+     <span>
+      <span class="mn">鑫达螺丝_报价.xls</span>
+      <span class="ms">09:20 · 文件损坏或加密，无法读取表结构</span>
+     </span>
+     <span class="mr"><span class="tag tag-danger"><span class="td"></span>失败</span></span>
+    </div>
+   </div>
+
+   <div class="m-note is-warn" data-icon="alert">解析失败与低置信度 Excel 会进入「待确认」，确认后才计入比价；确认过程本身会沉淀为模板样本，下次同类表自动识别。PDF/图片类文件 P0 走「待 P1 解析」，可先手工录入兜底。</div>
+
+   <div class="m-sec"><span>收不到？手动补一份</span><span class="rule"></span></div>
+   <div class="m-card">
+    <div class="m-card-b">
+     <button class="m-scan" style="width:100%" data-sheet-open="sheet-upload">
+      <span data-icon="download"></span>
+      <span>从手机上传 / 转发到本页（兜底通道）</span>
+      <span style="font-size:11px;color:var(--ink-4)">支持 xlsx / xls / pdf / 图片，多选批量</span>
+     </button>
+    </div>
+   </div>
+
+   <div class="m-sec"><span>解析流水线</span><span class="rule"></span><span class="cap">单批 ≤5 分钟</span></div>
+   <div class="m-card">
+    <div class="m-card-b">
+     <div class="m-tl">
+      <div class="m-tl-i is-done"><div class="m-tl-t">09:36:02</div><div class="m-tl-d">落盘归档</div><div class="m-tl-p">写入服务器真源 D:\agent-data\报价单\甲客户\2026-09\兴发五金\原始\</div></div>
+      <div class="m-tl-i is-done"><div class="m-tl-t">09:36:05</div><div class="m-tl-d">格式识别 + 表头映射</div><div class="m-tl-p">识别为「标准报价单模板 v3」，映射 7 个字段</div></div>
+      <div class="m-tl-i is-now"><div class="m-tl-t">09:36:08</div><div class="m-tl-d">行项目抽取与归一</div><div class="m-tl-p">46 行中 44 行通过，2 行待人工核对</div></div>
+      <div class="m-tl-i"><div class="m-tl-t">—</div><div class="m-tl-d">入库比价</div><div class="m-tl-p">确认后自动并入第 34 轮对比表</div></div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <nav class="m-tab" id="m-tab"></nav>
+
+  <div class="m-scrim" id="m-scrim"></div>
+  <div class="m-toast" id="m-toast"></div>
+
+  <div class="m-sheet" id="sheet-parse">
+   <div class="m-sheet-h">
+    <span class="t" style="font-size:var(--t-lg)">解析结果确认</span>
+    <span class="m-spacer"></span>
+    <button class="m-ibtn" data-icon="x" data-sheet-close></button>
+   </div>
+   <div class="m-sheet-b">
+    <div class="m-grid2">
+     <div class="field"><label>来源</label><div class="val">供应商报价群 · 王工</div></div>
+     <div class="field"><label>消息时间</label><div class="val">09:36:02</div></div>
+     <div class="field"><label>解析模板</label><div class="val">标准报价单 v3</div></div>
+     <div class="field"><label>整体置信度</label><div class="val">0.72</div></div>
+    </div>
+
+    <div class="m-note is-warn" data-icon="alert">字段「料号」未命中词典，已按第 2 列推断为型号；「单价」列含 2 个手写批注，请核对。</div>
+
+    <div class="m-tablewrap" style="max-height:none;margin-top:10px">
+     <table class="m-table">
+      <thead><tr><th class="sku">型号</th><th>单位</th><th>单价</th><th>交期</th><th>置信</th></tr></thead>
+      <tbody>
+       <tr><td class="sku">GB/T 5783 M8×40</td><td>个</td><td>0.42</td><td>7 天</td><td>0.98</td></tr>
+       <tr><td class="sku">GB/T 5782 M10×60</td><td>个</td><td>0.85</td><td>7 天</td><td>0.96</td></tr>
+       <tr><td class="sku">304 内六角 M6×20</td><td>个</td><td>1.24</td><td>10 天</td><td>0.71</td></tr>
+       <tr><td class="sku">开口销 Φ4×32</td><td>个</td><td>0.16</td><td>5 天</td><td>0.93</td></tr>
+      </tbody>
+     </table>
+    </div>
+
+    <div class="m-actions" style="margin-top:12px">
+     <button class="btn btn-primary" data-toast="已确认入库，并入第 34 轮对比表" data-sheet-close>确认入库</button>
+     <button class="btn" data-toast="进入人工修正：可直接改单元格，改动会回流为模板样本">人工修正</button>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px" data-toast="打开原始文件：兴发五金_20260911_报价单_v2.xlsx">查看原始文件</button>
+   </div>
+  </div>
+
+  <div class="m-sheet" id="sheet-p1">
+   <div class="m-sheet-h">
+    <span class="t" style="font-size:var(--t-lg)">待 P1 解析</span>
+    <span class="m-spacer"></span>
+    <button class="m-ibtn" data-icon="x" data-sheet-close></button>
+   </div>
+   <div class="m-sheet-b">
+    <div class="m-note is-info" data-icon="file">该文件为 PDF/图片，P0 阶段暂不解析（Excel 为主，OCR 整体后移 P1）。文件已归档入库、不丢；可在对比表中留待 P1 补齐，先手工录入关键行即可参与本轮比价。</div>
+    <div class="field" style="margin-top:10px"><label>文件</label><div class="val" id="p1-file">隆泰紧固件_20260911 报价.pdf</div></div>
+    <div class="m-grid2" style="margin-top:8px">
+     <div class="field"><label>来源</label><div class="val">供应商报价群 · 王工</div></div>
+     <div class="field"><label>计划解析</label><div class="val">P1 第 5–8 周（PDF/OCR）</div></div>
+    </div>
+    <div class="m-actions" style="margin-top:12px">
+     <button class="btn btn-primary" data-toast="已入「待 P1 解析」队列，归档不丢" data-sheet-close>确认归档，待 P1 解析</button>
+     <button class="btn" data-toast="进入手工录入：直接填型号与单价，先并入本轮对比">先手工录入</button>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px" data-toast="打开原始文件：隆泰紧固件_20260911 报价.pdf">查看原始文件</button>
+   </div>
+  </div>
+
+  <div class="m-sheet" id="sheet-upload">
+   <div class="m-sheet-h">
+    <span class="t" style="font-size:var(--t-lg)">上传报价单</span>
+    <span class="m-spacer"></span>
+    <button class="m-ibtn" data-icon="x" data-sheet-close></button>
+   </div>
+   <div class="m-sheet-b">
+    <div class="m-note" data-icon="message">兜底通道（永远保留）：企微开不通或个别文件漏收时，在微信里长按文件 → 用本页打开，或直接拍照上传，其余环节完全一样。</div>
+    <div class="m-stack" style="margin-top:12px">
+     <button class="btn btn-block" data-icon="file" data-toast="已选择 3 个文件，开始归档与解析">从手机选择文件</button>
+     <button class="btn btn-block" data-icon="file" data-toast="调起相机（真机演示），拍完自动 OCR">拍照 / 拍屏上传</button>
+     <button class="btn btn-block" data-icon="message" data-toast="从微信聊天记录里选择文件（JS-SDK 能力）">从微信聊天记录选择</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script src="assets/mobile.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>审批中心 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-09</span><span class="sep">/</span><b>审批中心</b></div>
+ <div class="grow"></div>
+ <div class="seg" data-seg><button class="is-on">待我审批 8</button><button>我发起的</button><button>已裁决</button></div>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">管</span><span class="t-sm nav-foot-meta">平台管理员</span></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">治理域 · 人工介入</div>
+ <h1 class="h1 mt-2">审批中心</h1>
+ <p class="page-desc">队列按 SLA 剩余时间升序排列，超时未裁决的请求将被自动拒绝并写入审计。高风险请求（写操作 / 批量导出 / 跨租户）需要二次确认。</p>
+ </div>
+ <div class="page-actions">
+ <button class="btn" data-ico="refresh" data-demo="刷新队列">刷新</button>
+ <button class="btn btn-primary" data-ico="check" data-demo="批量批准">批量批准（2）</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="alert alert-warn mb-4"><span data-ico="alert"></span><div class="grow"><b>2 条请求将在 15 分钟内超时</b>　·　PA-2291（供应商主数据批量写入）、PA-2288（跨租户数据导出）。超时按策略 <span class="code">pol-timeout-deny</span> 自动拒绝。</div><button class="btn btn-sm" data-demo="查看超时策略">查看策略</button></div>
+
+ <div class="grid g-4 mb-4">
+ <div class="kpi is-warn"><span class="kpi-label">待我审批</span><span class="kpi-value">8<small>条</small></span><span class="kpi-foot">其中高风险 <span class="delta up">3</span> 条</span></div>
+ <div class="kpi is-danger"><span class="kpi-label">即将超时</span><span class="kpi-value">2<small>条</small></span><span class="kpi-foot">SLA 剩余 &lt; 15 分钟</span></div>
+ <div class="kpi"><span class="kpi-label">今日已裁决</span><span class="kpi-value">31<small>条</small></span><span class="kpi-foot">批准 26 · 拒绝 5</span></div>
+ <div class="kpi is-ok"><span class="kpi-label">平均等待</span><span class="kpi-value">12<small>min</small></span><span class="kpi-foot"><span class="delta up">▼ 31%</span> 较上周</span></div>
+ </div>
+
+ <div class="grid g-2-1">
+
+ <!-- 左：审批队列 -->
+ <div>
+ <div class="toolbar">
+ <span class="input-icon grow"><span data-ico="search"></span><input class="input" placeholder="搜索请求号、工具名、申请人"></span>
+ <select class="select" style="width:132px"><option>全部风险</option><option>高风险</option><option>中风险</option><option>低风险</option></select>
+ <select class="select" style="width:132px"><option>全部工具</option><option>报价单加价放行</option><option>供应商主数据写入</option><option>数据导出</option><option>邮件外发</option></select>
+ <div class="grow"></div>
+ <button class="btn btn-sm" data-ico="download" data-demo="导出审批记录">导出</button>
+ </div>
+
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr>
+ <th class="check"><input type="checkbox" aria-label="全选"></th>
+ <th>请求 / 工具</th><th>申请人</th><th>风险</th><th>SLA 剩余</th><th>状态</th><th></th>
+ </tr></thead>
+ <tbody>
+ <tr>
+ <td class="check"><input type="checkbox" aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2291 · 供应商主数据批量写入</span><span class="l2">tool: erp.vendor.batch_write · 影响 412 行</span></div></td>
+ <td><div class="cell-2"><span class="l1">李伟</span><span class="l2">华东制造 · 采购部</span></div></td>
+ <td><span class="tag tag-danger"><span class="td"></span>高</span></td>
+ <td><span class="sla urgent">00:08:42</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>待审批</span></td>
+ <td class="actions"><button class="btn btn-sm btn-primary" data-demo="批准 PA-2291">批准</button><button class="btn btn-sm" data-demo="拒绝 PA-2291">拒绝</button></td>
+ </tr>
+ <tr>
+ <td class="check"><input type="checkbox" checked aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2288 · 跨租户数据导出</span><span class="l2">tool: bi.export_tenant_csv · 目标租户 3 个</span></div></td>
+ <td><div class="cell-2"><span class="l1">王倩</span><span class="l2">云图设计 · 数据组</span></div></td>
+ <td><span class="tag tag-danger"><span class="td"></span>高</span></td>
+ <td><span class="sla urgent">00:12:05</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>待审批</span></td>
+ <td class="actions"><button class="btn btn-sm btn-primary" data-demo="批准 PA-2288">批准</button><button class="btn btn-sm" data-demo="拒绝 PA-2288">拒绝</button></td>
+ </tr>
+ <tr class="is-selected">
+ <td class="check"><input type="checkbox" checked aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2292 · 报价单加价低于毛利底线</span><span class="l2">tool: quote.price_apply · 甲客户第 34 轮 · 毛利 4.2% / 底线 6%</span></div></td>
+ <td><div class="cell-2"><span class="l1">张磊</span><span class="l2">华东制造 · 报价组</span></div></td>
+ <td><span class="tag tag-warn"><span class="td"></span>中</span></td>
+ <td><span class="sla">00:22:48</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>待审批</span></td>
+ <td class="actions"><button class="btn btn-sm btn-primary" data-demo="批准 PA-2292">批准</button><button class="btn btn-sm" data-demo="拒绝 PA-2292">拒绝</button></td>
+ </tr>
+ <tr>
+ <td class="check"><input type="checkbox" aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2286 · 邮件批量外发</span><span class="l2">tool: mail.bulk_send · 收件人 1,280</span></div></td>
+ <td><div class="cell-2"><span class="l1">陈昊</span><span class="l2">恒信物流 · 客户成功</span></div></td>
+ <td><span class="tag tag-warn"><span class="td"></span>中</span></td>
+ <td><span class="sla">01:47:33</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>待审批</span></td>
+ <td class="actions"><button class="btn btn-sm btn-primary" data-demo="批准 PA-2286">批准</button><button class="btn btn-sm" data-demo="拒绝 PA-2286">拒绝</button></td>
+ </tr>
+ <tr>
+ <td class="check"><input type="checkbox" aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2284 · 财务凭证作废</span><span class="l2">tool: finance.voucher.void · 科目 6602</span></div></td>
+ <td><div class="cell-2"><span class="l1">刘洋</span><span class="l2">星海科技 · 财务部</span></div></td>
+ <td><span class="tag tag-warn"><span class="td"></span>中</span></td>
+ <td><span class="sla">03:20:11</span></td>
+ <td><span class="tag tag-warn"><span class="td"></span>待审批</span></td>
+ <td class="actions"><button class="btn btn-sm btn-primary" data-demo="批准 PA-2284">批准</button><button class="btn btn-sm" data-demo="拒绝 PA-2284">拒绝</button></td>
+ </tr>
+ <tr>
+ <td class="check"><input type="checkbox" aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2283 · 知识库文档下架</span><span class="l2">tool: kb.doc.unpublish · kb_policy_cn</span></div></td>
+ <td><div class="cell-2"><span class="l1">赵敏</span><span class="l2">内部 · 法务合规</span></div></td>
+ <td><span class="tag tag-info"><span class="td"></span>低</span></td>
+ <td><span class="sla">05:12:47</span></td>
+ <td><span class="tag tag-ok"><span class="td"></span>已批准</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看记录">记录</button></td>
+ </tr>
+ <tr>
+ <td class="check"><input type="checkbox" aria-label="选择"></td>
+ <td><div class="cell-2"><span class="l1">PA-2280 · 生产库连接串读取</span><span class="l2">tool: infra.secret.read · prod-mysql-main</span></div></td>
+ <td><div class="cell-2"><span class="l1">孙宁</span><span class="l2">内部 · 平台运维</span></div></td>
+ <td><span class="tag tag-danger"><span class="td"></span>高</span></td>
+ <td><span class="sla">—</span></td>
+ <td><span class="tag tag-danger"><span class="td"></span>已拒绝</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看记录">记录</button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 8 条待审批 · 已选 2 条</span>
+ <div class="pager-btns"><button>‹</button><button class="is-on">1</button><button>2</button><button>›</button></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- 右：裁决面板 -->
+ <div>
+ <div class="section">
+ <div class="section-head"><span class="section-no">PA-2292</span><span class="section-title">裁决面板</span><span class="rule"></span></div>
+
+ <div class="approval-card">
+ <div class="row-between mb-2">
+ <span class="strong">报价单加价低于毛利底线</span>
+ <span class="sla">00:22:48</span>
+ </div>
+ <p class="t-sm" style="color:var(--ink-2)">Agent「报价单收单比价智能体」请求放行甲客户第 34 轮报价单的加价结果：加价后整体毛利 4.2%，低于租户配置底线 6%。触发策略 <span class="code">pol-margin-floor</span>。</p>
+ <div class="dl mt-3">
+ <dt>申请人</dt><dd>张磊 · 华东制造 / 报价组</dd>
+ <dt>触发策略</dt><dd>加价低于毛利底线需人工放行</dd>
+ <dt>风险评估</dt><dd><span class="tag tag-warn"><span class="td"></span>中</span> 命中「毛利低于底线 6%」</dd>
+ <dt>请求时间</dt><dd class="mono">2026-09-11 19:25:43</dd>
+ </div>
+ </div>
+
+ <div class="section-head mt-5"><span class="section-title">参数摘要</span><span class="rule"></span><span class="section-hint">已脱敏</span></div>
+ <div class="json-view">
+ <div class="json-line"><span class="mono dim">1</span><span><span class="json-k">"round"</span>: <span class="json-n">34</span>,</span></div>
+ <div class="json-line"><span class="mono dim">2</span><span><span class="json-k">"customer"</span>: <span class="json-s">"甲客户"</span>,</span></div>
+ <div class="json-line"><span class="mono dim">3</span><span><span class="json-k">"items"</span>: <span class="json-n">12</span>,</span></div>
+ <div class="json-line"><span class="mono dim">4</span><span><span class="json-k">"cost_total"</span>: <span class="json-n">41826.40</span>,</span></div>
+ <div class="json-line"><span class="mono dim">5</span><span><span class="json-k">"quote_total"</span>: <span class="json-n">43641.85</span>,</span></div>
+ <div class="json-line"><span class="mono dim">6</span><span><span class="json-k">"margin_rate"</span>: <span class="json-n">0.042</span>, <span class="json-k">"floor_rate"</span>: <span class="json-n">0.06</span>,</span></div>
+ <div class="json-line"><span class="mono dim">7</span><span><span class="json-k">"source_file"</span>: <span class="json-s">"恒昌标准件_20260911.xlsx"</span></span></div>
+ </div>
+
+ <div class="row gap-2 mt-3">
+ <button class="btn btn-sm" data-ico="ext" data-demo="查看完整参数（含水印）">完整参数</button>
+ <button class="btn btn-sm" data-ico="file" data-demo="查看报价单预览">出单预览</button>
+ <button class="btn btn-sm" data-ico="copy" data-demo="复制请求号">复制</button>
+ </div>
+
+ <div class="field mt-5"><label class="field-label">裁决备注</label><textarea class="textarea" placeholder="记录批准原因，将随审计留存（建议填写，高风险必填）"></textarea></div>
+
+ <div class="row gap-2 mt-3">
+ <button class="btn btn-primary grow" data-ico="check" data-demo="批准该请求">批准</button>
+ <button class="btn grow" data-ico="x" data-demo="拒绝该请求">拒绝</button>
+ <button class="btn btn-ghost" data-demo="转交他人">转交</button>
+ </div>
+ <p class="field-hint mt-2">批准后 Agent 将继续执行；拒绝会返回结构化原因给发起会话，并在对话中以工具卡形式呈现。</p>
+ </div>
+
+ <div class="section mt-5">
+ <div class="section-head"><span class="section-title">相似历史裁决</span><span class="rule"></span></div>
+ <div class="card">
+ <div class="noti"><span class="ni" data-ico="check"></span><div class="grow"><div class="t-sm strong">PA-2216 · 报价单加价低于毛利底线</div><div class="t-xs dim">李文 批准 · 08-30 · 备注「战略大客户，按 4% 特批，已同步合同条款」</div></div></div>
+ <div class="noti"><span class="ni" data-ico="x"></span><div class="grow"><div class="t-sm strong">PA-1955 · 报价单加价低于毛利底线</div><div class="t-xs dim">王强 拒绝 · 08-05 · 备注「应按集团底线 6% 执行，请先与供应商重新议价」</div></div></div>
+ </div>
+ </div>
+ </div>
+
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>连接器管理 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-14</span><span class="sep">/</span><b>连接器管理</b></div>
+ <div class="grow"></div>
+ <span class="tag tag-violet">场景 2 预留</span>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">系统域 · 外部系统接入</div>
+ <h1 class="h1 mt-2">连接器管理</h1>
+ <p class="page-desc">连接器把外部系统（ERP / CRM / 工单 / 数据仓库）包成平台可识别的动作端点。本页维护端点元数据与 Route DSL，凭证一律以引用方式绑定，明文永不落库、不出现在任何日志中。</p>
+ </div>
+ <div class="page-actions">
+ <button class="btn" data-ico="check" data-demo="批量连通性测试">批量测试</button>
+ <button class="btn btn-primary" data-ico="plus" data-demo="新建连接器">新建连接器</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="alert alert-accent mb-4"><span data-ico="alert"></span><div class="grow">当前版本<b>仅支持读取类动作</b>。写操作（如回写 ERP、创建工单）在场景 2 放开，发布前请确认 <span class="code">connector.outbound_action</span> 开关状态。</div><button class="btn btn-sm" data-demo="查看开关">查看开关</button></div>
+
+ <div class="grid g-4 mb-5">
+ <div class="kpi"><span class="kpi-label">连接器总数</span><span class="kpi-value">12</span><span class="kpi-foot">启用 9 · 停用 3</span></div>
+ <div class="kpi is-ok"><span class="kpi-label">连通正常</span><span class="kpi-value">9</span><span class="kpi-foot">最近测试均通过</span></div>
+ <div class="kpi is-warn"><span class="kpi-label">时延偏高</span><span class="kpi-value">2</span><span class="kpi-foot">P95 &gt; 2s</span></div>
+ <div class="kpi is-danger"><span class="kpi-label">测试失败</span><span class="kpi-value">1</span><span class="kpi-foot">凭证可能已轮换</span></div>
+ </div>
+
+ <div class="toolbar">
+ <span class="input-icon grow"><span data-ico="search"></span><input class="input" placeholder="搜索连接器名称、端点、负责人"></span>
+ <select class="select" style="width:130px"><option>全部类型</option><option>REST</option><option>数据库</option><option>消息队列</option></select>
+ <select class="select" style="width:130px"><option>全部状态</option><option>启用</option><option>停用</option><option>测试失败</option></select>
+ <div class="grow"></div>
+ <button class="btn btn-sm" data-ico="filter" data-demo="高级筛选">高级筛选</button>
+ </div>
+
+ <div class="table-wrap mb-5">
+ <table class="data">
+ <thead><tr>
+ <th>连接器</th><th>类型</th><th>端点</th><th>凭证引用</th><th class="num">P95 时延</th><th>最近测试</th><th>状态</th><th></th>
+ </tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="cell-2"><span class="l1">ERP 供应商查询</span><span class="l2">conn_erp_vendor</span></div></td>
+ <td><span class="tag tag-outline">REST</span></td>
+ <td class="mono t-xs">https://erp.internal/api/v2</td>
+ <td><span class="code">cred://erp-prod-readonly</span></td>
+ <td class="num">680ms</td>
+ <td><div class="cell-2"><span class="l1 t-sm">19:20 通过</span><span class="l2">200 OK · 412 rows</span></div></td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑连接器">编辑</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">CRM 线索库</span><span class="l2">conn_crm_lead</span></div></td>
+ <td><span class="tag tag-outline">REST</span></td>
+ <td class="mono t-xs">https://crm.internal/openapi</td>
+ <td><span class="code">cred://crm-prod</span></td>
+ <td class="num">2.4s</td>
+ <td><div class="cell-2"><span class="l1 t-sm">19:20 通过</span><span class="l2">200 OK · 缓慢</span></div></td>
+ <td><span class="tag tag-warn"><span class="td"></span>启用 · 慢</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑连接器">编辑</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">数据仓库（只读）</span><span class="l2">conn_dw_ro</span></div></td>
+ <td><span class="tag tag-outline">数据库</span></td>
+ <td class="mono t-xs">clickhouse://dw.internal:8123</td>
+ <td><span class="code">cred://dw-readonly</span></td>
+ <td class="num">310ms</td>
+ <td><div class="cell-2"><span class="l1 t-sm">19:19 通过</span><span class="l2">SELECT 1 正常</span></div></td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑连接器">编辑</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">工单系统</span><span class="l2">conn_ticket</span></div></td>
+ <td><span class="tag tag-outline">REST</span></td>
+ <td class="mono t-xs">https://ticket.internal/api</td>
+ <td><span class="code">cred://ticket-bot</span></td>
+ <td class="num">—</td>
+ <td><div class="cell-2"><span class="l1 t-sm" style="color:var(--danger)">19:18 失败</span><span class="l2">401 Unauthorized</span></div></td>
+ <td><span class="tag tag-danger"><span class="td"></span>测试失败</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑连接器">编辑</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">消息队列事件源</span><span class="l2">conn_mq_events</span></div></td>
+ <td><span class="tag tag-outline">消息队列</span></td>
+ <td class="mono t-xs">kafka://mq.internal:9092</td>
+ <td><span class="code">cred://mq-app</span></td>
+ <td class="num">45ms</td>
+ <td><div class="cell-2"><span class="l1 t-sm">19:17 通过</span><span class="l2">lag 0</span></div></td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑连接器">编辑</button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 12 个连接器 · 显示 1–5</span>
+ <div class="pager-btns"><button>‹</button><button class="is-on">1</button><button>2</button><button>›</button></div>
+ </div>
+ </div>
+
+ <div class="section">
+ <div class="section-head"><span class="section-no">conn_erp_vendor</span><span class="section-title">连接器详情</span><span class="rule"></span><span class="section-hint">启用中 · 负责人 孙宁</span></div>
+
+ <div class="grid g-2-1">
+ <div class="card">
+ <div class="card-head"><span class="card-title">Route DSL</span><span class="card-sub">动作 → 外部端点映射</span><span class="rule" style="flex:1;height:1px;background:var(--line-2)"></span><button class="btn btn-sm" data-ico="play" data-demo="校验 DSL">校验</button></div>
+ <div class="card-body">
+ <textarea class="textarea" rows="12" spellcheck="false">connector "erp_vendor_query" {
+  type    = "rest"
+  base    = "https://erp.internal/api/v2"
+  auth    = credential("erp-prod-readonly")
+
+  action "vendor.query" {
+    method  = GET
+    path    = "/vendors"
+    query   = { keyword = "$input.keyword", limit = "$input.limit ?? 50" }
+    timeout = 8s
+    retry   = { times = 2, backoff = "exponential" }
+    expose  = [ "vendor_id", "name", "tax_no", "status" ]
+  }
+
+  policy {
+    read_only = true
+    rate_limit = "60/m"
+  }
+}</textarea>
+ <div class="row-between mt-3">
+ <span class="t-xs dim">语法：Route DSL v0.4 · 上次校验 19:20:11 <span class="tag tag-ok">通过</span></span>
+ <span class="t-xs dim mono">4 个动作</span>
+ </div>
+ </div>
+ </div>
+
+ <div>
+ <div class="card mb-4">
+ <div class="card-head"><span class="card-title">连通性测试</span></div>
+ <div class="card-body">
+ <div class="field mb-3"><label class="field-label">测试动作</label><select class="select"><option>vendor.query</option><option>vendor.get_by_id</option><option>vendor.list_status</option></select></div>
+ <div class="row gap-2"><button class="btn btn-primary" data-ico="play" data-demo="执行测试">执行测试</button><button class="btn" data-ico="refresh" data-demo="重置">重置</button></div>
+ <div class="alert alert-ok mt-4"><span data-ico="check"></span><div class="grow t-sm">最近一次测试：<span class="mono">19:20:11</span> · <b>200 OK</b> · 耗时 <span class="mono">680ms</span> · 返回 412 行</div></div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title">凭证绑定</span><span class="card-sub">仅引用，不落明文</span></div>
+ <div class="card-body">
+ <div class="form-grid">
+ <div class="field span-all"><label class="field-label">凭证引用<span class="req">*</span></label><input class="input mono" value="cred://erp-prod-readonly"><span class="field-hint">在凭证库中创建，本页只能引用与解绑</span></div>
+ <div class="field"><label class="field-label">轮换策略</label><select class="select"><option>每 90 天自动轮换</option><option>手动轮换</option></select></div>
+ <div class="field"><label class="field-label">下次轮换</label><input class="input mono" value="2026-11-28"></div>
+ </div>
+ <div class="row gap-2 mt-4"><button class="btn" data-demo="前往凭证库">前往凭证库</button><button class="btn btn-danger" data-demo="解绑凭证">解绑</button></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <div class="section-head"><span class="section-title">动作清单</span><span class="rule"></span><span class="section-hint">已暴露给 Agent 编排</span></div>
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>动作</th><th>方法</th><th>路径</th><th>读写</th><th>超时</th><th>重试</th><th>状态</th></tr></thead>
+ <tbody>
+ <tr><td class="mono">vendor.query</td><td><span class="tag tag-ok tag-mono">GET</span></td><td class="mono t-xs">/vendors</td><td><span class="tag tag-outline">只读</span></td><td class="mono">8s</td><td class="mono">2 次</td><td><span class="tag tag-ok">已暴露</span></td></tr>
+ <tr><td class="mono">vendor.get_by_id</td><td><span class="tag tag-ok tag-mono">GET</span></td><td class="mono t-xs">/vendors/{id}</td><td><span class="tag tag-outline">只读</span></td><td class="mono">5s</td><td class="mono">2 次</td><td><span class="tag tag-ok">已暴露</span></td></tr>
+ <tr><td class="mono">vendor.list_status</td><td><span class="tag tag-ok tag-mono">GET</span></td><td class="mono t-xs">/vendors/status</td><td><span class="tag tag-outline">只读</span></td><td class="mono">5s</td><td class="mono">1 次</td><td><span class="tag tag-ok">已暴露</span></td></tr>
+ <tr><td class="mono">vendor.batch_write</td><td><span class="tag tag-warn tag-mono">POST</span></td><td class="mono t-xs">/vendors/batch</td><td><span class="tag tag-danger">写入</span></td><td class="mono">15s</td><td class="mono">0 次</td><td><span class="tag tag-warn">场景 2 未开放</span></td></tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

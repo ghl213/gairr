@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>物流跟踪 · 微信报价单智能体</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body class="m-body">
+<div class="m-stage">
+
+ <aside class="m-side">
+  <div class="eyebrow">H-06 · 移动端原型</div>
+  <h1>发货后<em>全程可查</em></h1>
+  <p>对应需求 8–9：发货后把物流码导入系统（扫码或 Excel 批量），与订单/客户自动关联；状态节点按时拉取，异常（滞留、派送失败、退回）自动浮到顶部并可一键通知客户。</p>
+  <ul>
+   <li><b>导入</b><span>扫码单条 / Excel 批量，校验单号与订单一致性</span></li>
+   <li><b>拉取</b><span>快递接口 10~30 分钟轮询 + 状态变更推送</span></li>
+   <li><b>异常</b><span>超 24h 无更新、派送失败、退回 → 红标提醒</span></li>
+   <li><b>关联</b><span>订单 ↔ 报价单 ↔ 客户 ↔ 物流节点一条链</span></li>
+  </ul>
+  <div class="m-links">
+   <a href="index.html">原型索引</a><a href="m-index.html">工作台</a><a href="m-intake.html">收单</a><a href="m-compare.html">比对</a><a href="m-chat.html">问答</a><a href="m-pricing.html">出单</a>
+  </div>
+ </aside>
+
+ <div class="phone">
+  <div class="m-status"><span data-mtime>9:41</span><span>企微 · 5G · 100%</span></div>
+
+  <header class="m-top">
+   <a class="m-ibtn is-back" href="m-index.html" data-icon="chev"></a>
+   <div>
+    <div class="m-title">物流跟踪</div>
+    <div class="m-sub">在途 8 · 已签收 23 · 异常 2</div>
+   </div>
+   <span class="m-spacer"></span>
+   <button class="m-ibtn" data-icon="refresh" data-toast="已向快递接口刷新 8 个在途单号"></button>
+   <button class="m-ibtn" data-icon="filter" data-toast="筛选：在途 / 已签收 / 异常 / 按客户"></button>
+  </header>
+
+  <div class="m-scroll">
+
+   <div class="m-note is-danger" data-icon="alert"><b>SO-20260909-03 派送失败</b>：客户地址无人接收，已在网点滞留 1 天，建议联系客户改约或改地址。</div>
+
+   <div class="m-kpis" style="margin-top:10px">
+    <div class="m-kpi"><div class="k">在途</div><div class="v">8</div><div class="f">今日更新 6 单</div></div>
+    <div class="m-kpi"><div class="k">已签收</div><div class="v">23</div><div class="f">本月累计</div></div>
+    <div class="m-kpi"><div class="k">异常</div><div class="v" style="color:var(--danger)">2</div><div class="f">1 滞留 / 1 退回</div></div>
+   </div>
+
+   <div class="m-sec"><span>导入物流码</span><span class="rule"></span><span class="cap">需求 8</span></div>
+   <div class="m-card">
+    <div class="m-card-b m-grid2">
+     <button class="btn btn-block" data-icon="search" data-toast="调起扫一扫：扫描面单条码（企微 JS-SDK）">扫码录入</button>
+     <button class="btn btn-block" data-icon="file" data-sheet-open="sheet-import">Excel 批量导入</button>
+    </div>
+   </div>
+
+   <div class="m-sec"><span>进行中的单</span><span class="rule"></span><span class="cap">8 单</span></div>
+
+   <div class="m-card">
+    <div class="m-card-h">
+     <span class="m-ico is-info" data-icon="activity"></span>
+     <div><div class="t">SO-20260910-07 · 甲客户</div><div class="s">顺丰 SF1234567890 · 昨 18:20 已揽收</div></div>
+     <span class="m-spacer"></span>
+     <span class="tag tag-info"><span class="td"></span>运输中</span>
+    </div>
+    <div class="m-card-b">
+     <div class="m-tl">
+      <div class="m-tl-i is-now"><div class="m-tl-t">今天 08:40</div><div class="m-tl-d">派送中</div><div class="m-tl-p">杭州余杭区网点 · 快递员 王师傅 138****2210</div></div>
+      <div class="m-tl-i is-done"><div class="m-tl-t">今天 03:12</div><div class="m-tl-d">到达杭州分拨中心</div><div class="m-tl-p">运输中</div></div>
+      <div class="m-tl-i is-done"><div class="m-tl-t">昨天 18:20</div><div class="m-tl-d">已揽收</div><div class="m-tl-p">深圳宝安集散点</div></div>
+      <div class="m-tl-i is-done"><div class="m-tl-t">昨天 16:05</div><div class="m-tl-d">已出货</div><div class="m-tl-p">关联报价单 Q-2026-0342（已签）· 5 项 / 133,000 件</div></div>
+     </div>
+     <div class="m-actions">
+      <button class="btn" data-icon="message" data-toast="已把最新物流状态发给甲客户微信">通知客户</button>
+      <button class="btn" data-toast="已复制单号 SF1234567890">复制单号</button>
+     </div>
+    </div>
+   </div>
+
+   <div class="m-card" style="margin-top:10px">
+    <div class="m-row" data-toast="打开 SO-20260909-03 详情：派送失败，滞留 1 天">
+     <span class="m-ico is-danger" data-icon="alert"></span>
+     <span><span class="mn">SO-20260909-03 · 丙客户</span><span class="ms">圆通 YT5566778899 · 派送失败，滞留 1 天</span></span>
+     <span class="mr"><span class="tag tag-danger"><span class="td"></span>异常</span></span>
+    </div>
+    <div class="m-row" data-toast="打开 SO-20260909-01 详情：今 09:05 已签收">
+     <span class="m-ico is-wx" data-icon="check"></span>
+     <span><span class="mn">SO-20260909-01 · 乙客户</span><span class="ms">京东 JD9988776655 · 今 09:05 已签收</span></span>
+     <span class="mr"><span class="tag tag-ok"><span class="td"></span>已签收</span></span>
+    </div>
+    <div class="m-row" data-toast="打开 SO-20260908-04 详情：待揽收 2 天">
+     <span class="m-ico is-warn" data-icon="clock"></span>
+     <span><span class="mn">SO-20260908-04 · 丙客户</span><span class="ms">中通 ZT1122334455 · 已下单待揽收 2 天</span></span>
+     <span class="mr"><span class="tag tag-warn"><span class="td"></span>待揽收</span></span>
+    </div>
+    <div class="m-row" data-toast="打开 SO-20260907-02 详情：退回中">
+     <span class="m-ico" data-icon="refresh"></span>
+     <span><span class="mn">SO-20260907-02 · 丁客户</span><span class="ms">德邦 DB2233445566 · 客户拒收，退回中</span></span>
+     <span class="mr"><span class="tag tag-danger"><span class="td"></span>退回</span></span>
+    </div>
+   </div>
+
+   <div class="m-sec"><span>问一句</span><span class="rule"></span></div>
+   <div class="m-card">
+    <div class="m-card-b">
+     <button class="m-scan" style="width:100%" data-toast="演示：已跳转问数页并发送「这批货走到哪了」">
+      <span data-icon="message"></span>
+      <span>「甲客户这批货走到哪了？」</span>
+      <span style="font-size:11px;color:var(--ink-4)">物流状态也走同一个问数 Agent，答案带来源</span>
+     </button>
+    </div>
+   </div>
+  </div>
+
+  <nav class="m-tab" id="m-tab"></nav>
+
+  <div class="m-scrim" id="m-scrim"></div>
+  <div class="m-toast" id="m-toast"></div>
+
+  <div class="m-sheet" id="sheet-import">
+   <div class="m-sheet-h">
+    <span class="t">批量导入物流码</span>
+    <span class="m-spacer"></span>
+    <button class="m-ibtn" data-icon="x" data-sheet-close></button>
+   </div>
+   <div class="m-sheet-b">
+    <div class="m-note" data-icon="file">支持 .xlsx 模板或直接粘贴两列：<b>订单号 / 物流单号</b>（可选：承运商、备注）。导入前会校验单号格式与订单归属。</div>
+
+    <button class="m-scan" style="width:100%;margin-top:12px" data-toast="已选择 物流码_20260911.xlsx">
+     <span data-icon="download"></span>
+     <span>选择 Excel 文件 / 粘贴批量单号</span>
+    </button>
+
+    <div class="m-sec" style="margin-top:14px"><span>本次导入结果</span><span class="rule"></span><span class="cap">102 条</span></div>
+    <div class="m-card">
+     <div class="m-row"><span class="m-ico is-wx" data-icon="check"></span><span><span class="mn">成功 100 条</span><span class="ms">已关联订单与客户，开始拉取轨迹</span></span></div>
+     <div class="m-row"><span class="m-ico is-warn" data-icon="alert"></span><span><span class="mn">失败 2 条</span><span class="ms">第 37 行：单号格式非法；第 88 行：订单号不存在</span></span></div>
+    </div>
+
+    <div class="m-actions" style="margin-top:12px">
+     <button class="btn btn-primary" data-toast="已重试 100 条成功单号的轨迹拉取" data-sheet-close>确认导入</button>
+     <button class="btn" data-icon="download" data-toast="已下载失败明细，可修正后重新导入">下载失败明细</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script src="assets/mobile.js"></script>
+</body>
+</html>

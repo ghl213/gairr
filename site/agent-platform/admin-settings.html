@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>系统配置与健康检查 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-13</span><span class="sep">/</span><b>系统配置与健康检查</b></div>
+ <div class="grow"></div>
+ <span class="health ok"><span class="lt"></span>全部依赖正常 <span class="ms">6/6</span></span>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">系统域 · 运维面</div>
+ <h1 class="h1 mt-2">系统配置与健康检查</h1>
+ <p class="page-desc">运行时配置的热更新入口与只读部署快照。凡涉及生效范围的配置变更都会记录到审计日志；部署快照来自容器环境变量与构建信息，仅供核对，不可在此修改。</p>
+ </div>
+ <div class="page-actions">
+ <button class="btn" data-ico="download" data-demo="导出诊断包">导出诊断包</button>
+ <button class="btn btn-primary" data-ico="check" data-demo="保存并发布配置">保存并发布</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="health-strip mb-5">
+ <span class="health ok"><span class="lt"></span>PostgreSQL <span class="ms">8ms</span></span>
+ <span class="health ok"><span class="lt"></span>Redis <span class="ms">2ms</span></span>
+ <span class="health ok"><span class="lt"></span>向量库 Milvus <span class="ms">23ms</span></span>
+ <span class="health ok"><span class="lt"></span>对象存储 S3 <span class="ms">41ms</span></span>
+ <span class="health warn"><span class="lt"></span>LLM 网关 <span class="ms">1.2s</span></span>
+ <span class="health ok"><span class="lt"></span>审计节点 <span class="ms">11ms</span></span>
+ </div>
+
+ <div class="tabs" data-tabs="#cfgPanes">
+ <button class="tab is-on" data-tab="runtime">运行时配置</button>
+ <button class="tab" data-tab="flags">功能开关</button>
+ <button class="tab" data-tab="snapshot">部署快照</button>
+ <button class="tab" data-tab="deps">依赖健康明细</button>
+ <button class="tab" data-tab="diag">诊断</button>
+ </div>
+
+ <div id="cfgPanes">
+
+ <div class="tabpane is-on" data-pane="runtime">
+ <div class="grid g-2">
+ <div class="card">
+ <div class="card-head"><span class="card-title">会话与限流</span><span class="card-sub">热更新 · 即时生效</span></div>
+ <div class="card-body">
+ <div class="form-grid">
+ <div class="field"><label class="field-label">单会话最大上下文</label><input class="input mono" value="32768"><span class="field-hint">超出后按策略截断最旧轮次</span></div>
+ <div class="field"><label class="field-label">单用户并发会话</label><input class="input mono" value="5"></div>
+ <div class="field"><label class="field-label">单租户 QPS 上限</label><input class="input mono" value="120"></div>
+ <div class="field"><label class="field-label">首字超时（秒）</label><input class="input mono" value="15"><span class="field-hint">超时触发降级链</span></div>
+ <div class="field span-all"><label class="field-label">排队策略</label><select class="select"><option>FIFO 先进先出</option><option>按租户权重</option><option>按任务优先级</option></select></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title">策略与安全</span><span class="card-sub">热更新 · 即时生效</span></div>
+ <div class="card-body">
+ <div class="form-grid">
+ <div class="field"><label class="field-label">策略判定超时（ms）</label><input class="input mono" value="200"><span class="field-hint">超时按 fail-closed 处理</span></div>
+ <div class="field"><label class="field-label">默认脱敏级别</label><select class="select"><option>中（手机号、身份证）</option><option>低（仅身份证）</option><option>高（含地址、邮箱）</option></select></div>
+ <div class="field span-all">
+ <label class="field-label">fail-closed 开关<span class="req">*</span></label>
+ <div class="row gap-3"><label class="switch"><input type="checkbox" checked><i></i></label><span class="t-sm muted">策略服务不可用时拒绝工具调用（强烈建议开启）</span></div>
+ </div>
+ <div class="field span-all"><label class="field-label">审计写入模式</label><div class="row gap-4 wrap"><label class="check"><input type="radio" name="audit" checked>同步写入</label><label class="check"><input type="radio" name="audit">异步写入（允许短暂延迟）</label></div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="alert alert-warn mt-4"><span data-ico="alert"></span><div class="grow">本次修改将影响 <b>5 个租户 · 1,283 名用户</b>，发布后立即生效。变更会写入审计日志（<span class="mono">config.change</span>）。</div><button class="btn btn-sm" data-demo="查看影响面">查看影响面</button></div>
+ </div>
+
+ <div class="tabpane" data-pane="flags">
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>开关</th><th>说明</th><th>灰度范围</th><th>状态</th><th></th></tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="cell-2"><span class="l1">多 Agent 编排（受限画布）</span><span class="l2">orchestration.canvas_v1</span></div></td>
+ <td class="muted">允许在 Agent 编辑器内拖拽串并联节点</td>
+ <td><span class="tag tag-violet">内部租户</span></td>
+ <td><label class="switch"><input type="checkbox" checked><i></i></label></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑灰度范围">灰度</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">连接器外部动作</span><span class="l2">connector.outbound_action</span></div></td>
+ <td class="muted">场景 2 预留：允许连接器发起外部写操作</td>
+ <td><span class="tag tag-warn">未放开</span></td>
+ <td><label class="switch"><input type="checkbox"><i></i></label></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑灰度范围">灰度</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">引用角标溯源高亮</span><span class="l2">chat.citation_badge</span></div></td>
+ <td class="muted">回答内展示 [1][2] 角标并可跳转切片</td>
+ <td><span class="tag tag-ok">全量</span></td>
+ <td><label class="switch"><input type="checkbox" checked><i></i></label></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑灰度范围">灰度</button></td>
+ </tr>
+ <tr>
+ <td><div class="cell-2"><span class="l1">MCP 工具自动注册</span><span class="l2">tools.mcp_autoreg</span></div></td>
+ <td class="muted">从 MCP Server 拉取工具清单并自动登记为草稿</td>
+ <td><span class="tag tag-ok">全量</span></td>
+ <td><label class="switch"><input type="checkbox" checked><i></i></label></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑灰度范围">灰度</button></td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+
+ <div class="tabpane" data-pane="snapshot">
+ <div class="alert alert-info mb-4"><span data-ico="lock"></span><div class="grow t-sm">该区域为<b>只读</b>，值来源于容器环境变量与构建流水线，修改需重新部署。</div></div>
+ <div class="grid g-2">
+ <div>
+ <div class="section-head"><span class="section-title">构建信息</span><span class="rule"></span></div>
+ <pre class="snapshot">build.version      = 1.0.0+20260910.3
+build.commit       = 8fa31c7
+build.branch       = main
+build.time         = 2026-09-10T22:14:08Z
+build.image        = registry.internal/gairr/agent-api:1.0.0
+deploy.env         = production
+deploy.region      = cn-east-1
+deploy.replicas    = 6
+deploy.started_at  = 2026-09-11T02:00:12Z
+deploy.operator    = ci-bot</pre>
+ </div>
+ <div>
+ <div class="section-head"><span class="section-title">运行时参数</span><span class="rule"></span></div>
+ <pre class="snapshot">DB_POOL_MAX       = 40
+REDIS_MODE        = cluster
+VECTOR_STORE      = milvus
+OBJECT_STORE      = s3://gairr-prod
+LLM_GATEWAY_URL   = https://gw.internal/v1
+POLICY_ENGINE_URL = https://policy.internal
+AUDIT_RETENTION_D = 365
+LOG_LEVEL         = info
+OTEL_ENDPOINT     = otel-collector:4317</pre>
+ </div>
+ </div>
+ </div>
+
+ <div class="tabpane" data-pane="deps">
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>依赖</th><th>类型</th><th>端点</th><th class="num">时延</th><th>最近检查</th><th>状态</th></tr></thead>
+ <tbody>
+ <tr><td>PostgreSQL 16</td><td>数据库</td><td class="mono">pg-prod.internal:5432</td><td class="num">8ms</td><td class="mono">19:24:10</td><td><span class="tag tag-ok"><span class="td"></span>正常</span></td></tr>
+ <tr><td>Redis Cluster</td><td>缓存</td><td class="mono">redis-prod.internal:6379</td><td class="num">2ms</td><td class="mono">19:24:10</td><td><span class="tag tag-ok"><span class="td"></span>正常</span></td></tr>
+ <tr><td>Milvus 2.4</td><td>向量库</td><td class="mono">milvus-prod.internal:19530</td><td class="num">23ms</td><td class="mono">19:24:09</td><td><span class="tag tag-ok"><span class="td"></span>正常</span></td></tr>
+ <tr><td>S3 兼容存储</td><td>对象存储</td><td class="mono">s3://gairr-prod</td><td class="num">41ms</td><td class="mono">19:24:08</td><td><span class="tag tag-ok"><span class="td"></span>正常</span></td></tr>
+ <tr><td>LLM 网关</td><td>外部服务</td><td class="mono">gw.internal/v1</td><td class="num">1.2s</td><td class="mono">19:24:06</td><td><span class="tag tag-warn"><span class="td"></span>时延偏高</span></td></tr>
+ <tr><td>审计哈希节点</td><td>内部服务</td><td class="mono">audit-node-02</td><td class="num">11ms</td><td class="mono">19:24:10</td><td><span class="tag tag-ok"><span class="td"></span>正常</span></td></tr>
+ </tbody>
+ </table>
+ </div>
+ <div class="alert alert-warn mt-4"><span data-ico="alert"></span><div class="grow t-sm">LLM 网关过去 15 分钟 P95 时延由 <span class="mono">680ms</span> 升至 <span class="mono">1.2s</span>，已自动将摘要类请求切换到 gpt-4o-mini。建议关注上游配额。</div></div>
+ </div>
+
+ <div class="tabpane" data-pane="diag">
+ <div class="grid g-2">
+ <div class="card">
+ <div class="card-head"><span class="card-title">健康探测</span></div>
+ <div class="card-body">
+ <div class="meta-list">
+ <div class="meta-row"><span class="meta-k">存活探针</span><span class="meta-v"><span class="tag tag-ok">通过</span> <span class="mono t-xs">/healthz · 每 10s</span></span></div>
+ <div class="meta-row"><span class="meta-k">就绪探针</span><span class="meta-v"><span class="tag tag-ok">通过</span> <span class="mono t-xs">/readyz · 每 10s</span></span></div>
+ <div class="meta-row"><span class="meta-k">连续失败</span><span class="meta-v mono">0 次</span></div>
+ <div class="meta-row"><span class="meta-k">最近重启</span><span class="meta-v mono">2026-09-11 02:00:12</span></div>
+ </div>
+ <div class="row gap-2 mt-4"><button class="btn" data-ico="refresh" data-demo="立即探测">立即探测</button><button class="btn" data-ico="download" data-demo="导出诊断包">导出诊断包</button></div>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-head"><span class="card-title">近期告警</span><span class="card-sub">近 24 小时</span></div>
+ <div class="card-body tight">
+ <div class="noti unread"><span class="ni" data-ico="alert"></span><div class="grow"><div class="strong">LLM 网关时延告警</div><div class="t-xs dim">19:12 · P95 &gt; 1s 持续 5 分钟 · 已自动降级</div></div><span class="tag tag-warn">处理中</span></div>
+ <div class="noti"><span class="ni" data-ico="alert"></span><div class="grow"><div class="strong">Milvus 内存使用 78%</div><div class="t-xs dim">17:40 · 尚未触发阈值（85%）</div></div><span class="tag tag-ok">已恢复</span></div>
+ <div class="noti"><span class="ni" data-ico="alert"></span><div class="grow"><div class="strong">华东制造配额达到 96%</div><div class="t-xs dim">16:02 · 已通知租户管理员</div></div><span class="tag tag-warn">观察中</span></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

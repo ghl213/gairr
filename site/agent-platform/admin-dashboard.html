@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>仪表盘 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-01</span><span class="sep">/</span><b>仪表盘</b></div>
+ <div class="grow"></div>
+ <span class="input-icon" style="width:240px"><span data-ico="search"></span><input class="input input-sm" placeholder="搜索 Agent / 任务 / 用户"></span>
+ <button class="icon-btn" data-ico="bell" title="告警" data-demo="告警中心"><span class="dot">5</span></button>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">管</span><span class="t-sm nav-foot-meta">平台管理员</span></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">Overview · 近 24 小时</div>
+ <h1 class="h1 mt-2">运行概览</h1>
+ <p class="page-desc">面向平台运营的全局视图：用量水位、Agent 活跃度、依赖健康与待处理风险。数据每 60 秒刷新，指标口径见右下角“口径说明”。</p>
+ </div>
+ <div class="page-actions">
+ <div class="seg" data-seg><button>24 小时</button><button class="is-on">7 天</button><button>30 天</button></div>
+ <button class="btn" data-ico="refresh" data-demo="立即刷新">刷新</button>
+ <button class="btn btn-primary" data-ico="download" data-demo="导出快照">导出快照</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="grid g-4 mb-4">
+ <div class="kpi">
+ <span class="kpi-label">今日会话数</span>
+ <span class="kpi-value">4,182<small>次</small></span>
+ <span class="kpi-foot"><span class="delta up">▲ 12.4%</span> 较昨日</span>
+ </div>
+ <div class="kpi">
+ <span class="kpi-label">活跃 Agent</span>
+ <span class="kpi-value">37<small>/ 62</small></span>
+ <span class="kpi-foot"><span class="delta flat">— 持平</span> 近 7 天有调用</span>
+ </div>
+ <div class="kpi is-ok">
+ <span class="kpi-label">工具调用成功率</span>
+ <span class="kpi-value">98.4<small>%</small></span>
+ <span class="kpi-foot"><span class="delta up">▲ 0.6pp</span> 目标 ≥ 98%</span>
+ </div>
+ <div class="kpi is-warn">
+ <span class="kpi-label">首字延迟 P95</span>
+ <span class="kpi-value">1.24<small>s</small></span>
+ <span class="kpi-foot"><span class="delta down">▲ 180ms</span> 目标 ≤ 1.2s</span>
+ </div>
+ </div>
+
+ <div class="grid g-4 mb-4">
+ <div class="kpi">
+ <span class="kpi-label">今日 Token 消耗</span>
+ <span class="kpi-value">12.8<small>M</small></span>
+ <span class="kpi-foot">预算 20M · 已用 64%</span>
+ </div>
+ <div class="kpi is-danger">
+ <span class="kpi-label">待处理审批</span>
+ <span class="kpi-value">8<small>条</small></span>
+ <span class="kpi-foot"><a href="admin-approvals.html" class="strong" style="color:var(--danger)">2 条已超 SLA →</a></span>
+ </div>
+ <div class="kpi">
+ <span class="kpi-label">运行中任务</span>
+ <span class="kpi-value">24<small>个</small></span>
+ <span class="kpi-foot">最长运行 14m22s</span>
+ </div>
+ <div class="kpi is-danger">
+ <span class="kpi-label">近 24 小时失败</span>
+ <span class="kpi-value">41<small>次</small></span>
+ <span class="kpi-foot"><a href="admin-tasks.html" class="strong" style="color:var(--danger)">查看失败样本 →</a></span>
+ </div>
+ </div>
+
+ <div class="section">
+ <div class="section-head"><span class="section-no">01</span><span class="section-title">调用量趋势</span><span class="rule"></span><span class="section-hint">柱高 = 会话数；悬停查看当日明细</span></div>
+ <div class="card card-pad">
+ <div class="trend">
+ <i style="height:38%"></i><i style="height:46%"></i><i style="height:41%"></i><i class="hi" style="height:62%;background:var(--brand)"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:44%"></i>
+ <i style="height:52%"></i><i style="height:58%"></i><i style="height:51%"></i><i style="height:64%"></i><i style="height:72%"></i><i style="height:66%"></i><i style="height:59%"></i>
+ <i style="height:70%"></i><i style="height:78%"></i><i style="height:81%"></i><i style="height:74%"></i><i style="height:88%"></i><i style="height:92%"></i><i style="height:85%"></i>
+ <i style="height:79%"></i><i style="height:94%"></i><i style="height:100%;background:var(--brand)"></i><i style="height:96%"></i><i style="height:89%"></i><i style="height:93%"></i><i style="height:87%"></i>
+ <i style="height:82%"></i><i style="height:90%"></i>
+ </div>
+ <div class="trend-axis"><span>09-08</span><span>09-15</span><span>09-22</span><span>09-29</span><span>10-06</span></div>
+ </div>
+ </div>
+
+ <div class="grid g-2-1">
+ <div class="section">
+ <div class="section-head"><span class="section-no">02</span><span class="section-title">Top Agent（按会话数）</span><span class="rule"></span><span class="section-hint">近 7 天</span></div>
+ <div class="card card-pad">
+ <div class="bars">
+ <div class="bar-row"><span class="truncate">客服助手</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">18,204</span></div>
+ <div class="bar-row"><span class="truncate">通用助手</span><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div><span class="bar-val">13,116</span></div>
+ <div class="bar-row"><span class="truncate">数据分析 Agent</span><div class="bar-track"><div class="bar-fill" style="width:44%"></div></div><span class="bar-val">8,022</span></div>
+ <div class="bar-row"><span class="truncate">报价单收单比价 <span class="tag tag-brand tag-mono" style="margin-left:4px">客户场景</span></span><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div><span class="bar-val">6,410</span></div>
+ <div class="bar-row"><span class="truncate">报销单预审</span><div class="bar-track"><div class="bar-fill warn" style="width:29%"></div></div><span class="bar-val">5,280</span></div>
+ <div class="bar-row"><span class="truncate">合同要素抽取</span><div class="bar-track"><div class="bar-fill accent" style="width:16%"></div></div><span class="bar-val">2,914</span></div>
+ </div>
+ <div class="row-between mt-4 t-xs dim"><span>「报价单收单比价智能体」上线 3 天即进入 Top 5（甲客户）；失败率最高的为「数据分析 Agent」1.9%，建议查看其工具依赖</span><a href="admin-tasks.html" class="strong">运行详情 →</a></div>
+ </div>
+ </div>
+
+ <div class="section">
+ <div class="section-head"><span class="section-no">03</span><span class="section-title">依赖健康</span><span class="rule"></span></div>
+ <div class="card card-pad">
+ <div class="health-strip">
+ <span class="health ok"><span class="lt"></span>PostgreSQL<span class="ms">8ms</span></span>
+ <span class="health ok"><span class="lt"></span>Redis<span class="ms">2ms</span></span>
+ <span class="health ok"><span class="lt"></span>对象存储<span class="ms">41ms</span></span>
+ <span class="health warn"><span class="lt"></span>向量库<span class="ms">310ms</span></span>
+ <span class="health ok"><span class="lt"></span>模型网关<span class="ms">620ms</span></span>
+ <span class="health down"><span class="lt"></span>企业微信回调<span class="ms">超时</span></span>
+ </div>
+ <div class="alert alert-warn mt-4"><span data-ico="alert"></span><div class="grow"><b>企业微信回调连续 3 次超时</b>，审批通知可能延迟；已自动降级为站内信。</div></div>
+ <div class="row row-gap mt-3"><a class="btn btn-sm" href="admin-settings.html" data-ico="activity">健康明细</a><a class="btn btn-sm" href="admin-connectors.html" data-ico="plug">连接器</a></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="section">
+ <div class="section-head"><span class="section-no">04</span><span class="section-title">需要关注</span><span class="rule"></span><span class="section-hint">按严重度排序</span></div>
+ <div class="card">
+ <div class="noti unread"><span class="ni" data-ico="alert"></span><div class="grow"><div class="row-between"><span class="strong">审批 SLA 超时 2 条</span><span class="t-xs dim mono">8 分钟前</span></div><div class="t-sm muted">标为高风险的「批量更新客户状态」已超时 1h12m，请尽快裁决。</div></div></div>
+ <div class="noti unread"><span class="ni" data-ico="file"></span><div class="grow"><div class="row-between"><span class="strong">报价单收单比价：3 份报价单待人工确认</span><span class="t-xs dim mono">12 分钟前</span></div><div class="t-sm muted">恒昌 / 三和 / 兴发 3 家供应商报价单表头未识别，人工确认后才计入第 34 轮比价；另 2 条物流单号缺失待补录。</div></div></div>
+ <div class="noti unread"><span class="ni" data-ico="clock"></span><div class="grow"><div class="row-between"><span class="strong">租户「星海科技」Token 用量达 92%</span><span class="t-xs dim mono">26 分钟前</span></div><div class="t-sm muted">本月剩余 1.6M，按当前速率 3 天后耗尽。</div></div></div>
+ <div class="noti"><span class="ni" data-ico="cpu"></span><div class="grow"><div class="row-between"><span class="strong">模型「qwen-max」失败率升至 4.1%</span><span class="t-xs dim mono">1 小时前</span></div><div class="t-sm muted">路由已自动切至备用链路 deepseek-v3，建议排查供应商侧限流。</div></div></div>
+ <div class="noti"><span class="ni" data-ico="file"></span><div class="grow"><div class="row-between"><span class="strong">审计哈希链校验通过</span><span class="t-xs dim mono">3 小时前</span></div><div class="t-sm muted">最近 10,000 条事件链完整，无断点。</div></div></div>
+ </div>
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

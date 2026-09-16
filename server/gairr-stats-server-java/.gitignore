@@ -1,0 +1,7 @@
+# gairr-stats-server-java 构建产物（由 build.cmd 生成，不入库）
+# 说明：jar/class 每次 javac+jar 重打包都会变（含时间戳），入库会让每个叶子的
+# 工作区都出现二进制改动噪音，故一律忽略；部署产物按 README 用 build.cmd 现打。
+out/
+build/
+*.class
+*.jar

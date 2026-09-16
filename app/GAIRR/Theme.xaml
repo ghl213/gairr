@@ -1,0 +1,1006 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:GAIRR">
+
+    <!-- ================= 调色板（与官网 demo.html 完全一致） ================= -->
+    <Color x:Key="BgColor">#07070F</Color>
+    <Color x:Key="CardColor">#14151F</Color>
+    <Color x:Key="SideBgColor">#0C0C16</Color>
+
+    <SolidColorBrush x:Key="BgBrush" Color="#07070F"/>
+    <SolidColorBrush x:Key="CardBrush" Color="#14151F"/>
+    <SolidColorBrush x:Key="SideBgBrush" Color="#0C0C16"/>
+    <SolidColorBrush x:Key="BorderBrush2" Color="#1C1D29"/>
+    <SolidColorBrush x:Key="TextBrush" Color="#EEF0F6"/>
+    <SolidColorBrush x:Key="DimBrush" Color="#9AA0B4"/>
+    <SolidColorBrush x:Key="CmtBrush" Color="#5B6172"/>
+    <SolidColorBrush x:Key="P1Brush" Color="#6366F1"/>
+    <SolidColorBrush x:Key="P2Brush" Color="#06B6D4"/>
+    <SolidColorBrush x:Key="PurpleBrush" Color="#8B5CF6"/>
+    <SolidColorBrush x:Key="GreenBrush" Color="#3ECF8E"/>
+    <SolidColorBrush x:Key="AmberBrush" Color="#F0A13E"/>
+    <SolidColorBrush x:Key="WaitBrush" Color="#FACC15"/>
+    <SolidColorBrush x:Key="PauseBrush" Color="#F04E4E"/>
+    <SolidColorBrush x:Key="AvBgBrush" Color="#2B2D3A"/>
+
+    <!-- 布尔转透明度转换器：true=1.0, false=0.4 -->
+    <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    <local:BoolToOpacityConverter x:Key="BoolToOpacity"/>
+    <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility"/>
+
+    <LinearGradientBrush x:Key="GradP12" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="#6366F1" Offset="0"/>
+        <GradientStop Color="#06B6D4" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradAv" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#6366F1" Offset="0"/>
+        <GradientStop Color="#8B5CF6" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GradUserBubble" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#BF6366F1" Offset="0"/>
+        <GradientStop Color="#8C6366F1" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- ================= 隐形滚动条（官网规范：scrollbar-width:none） ================= -->
+    <Style x:Key="HiddenScrollBar" TargetType="ScrollBar">
+        <Setter Property="Width" Value="0"/>
+        <Setter Property="Height" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="HiddenScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid Background="Transparent">
+                        <ScrollContentPresenter Margin="{TemplateBinding Padding}"/>
+                        <ScrollBar x:Name="PART_VerticalScrollBar" Style="{StaticResource HiddenScrollBar}"
+                                   Orientation="Vertical"
+                                   Value="{TemplateBinding VerticalOffset}"
+                                   Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"/>
+                        <ScrollBar x:Name="PART_HorizontalScrollBar" Style="{StaticResource HiddenScrollBar}"
+                                   Orientation="Horizontal"
+                                   Value="{TemplateBinding HorizontalOffset}"
+                                   Maximum="{TemplateBinding ScrollableWidth}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 窄滚动条：用于目录树等需要可见水平滚动条但保持简洁的场景 -->
+    <Style x:Key="NarrowScrollBar" TargetType="ScrollBar">
+        <Setter Property="Width" Value="10"/>
+        <!-- Height 不能写死：垂直滚动条需 Auto 拉伸满轨道高（水平方向由下方触发器设 Height=10） -->
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent" Width="{TemplateBinding Width}">
+                        <Border x:Name="trk" Background="#252535" CornerRadius="5" Margin="2,0"/>
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border CornerRadius="4" Background="#6A6A7A" Margin="1"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter Property="Height" Value="10"/>
+                            <Setter Property="Width" Value="Auto"/>
+                            <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False"/>
+                        </Trigger>
+                        <!-- 垂直方向右贴边：去掉右侧留白让轨道紧贴容器右缘，顶部保留2px避免与8px圆角重叠 -->
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter TargetName="trk" Property="Margin" Value="0,2,0,2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 目录树专用滚动容器：垂直滚动条隐藏（由滚轮驱动），水平滚动条可见 -->
+    <Style x:Key="DirScrollViewer" TargetType="ScrollViewer" BasedOn="{StaticResource HiddenScrollViewer}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ScrollContentPresenter Grid.Row="0" Grid.Column="0" Margin="{TemplateBinding Padding}"/>
+                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                                   Style="{StaticResource HiddenScrollBar}" Orientation="Vertical"
+                                   Value="{TemplateBinding VerticalOffset}"
+                                   Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"/>
+                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Grid.Column="0"
+                                   Style="{StaticResource NarrowScrollBar}" Orientation="Horizontal"
+                                   Value="{TemplateBinding HorizontalOffset}"
+                                   Maximum="{TemplateBinding ScrollableWidth}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 侧栏标签页按钮：项目 / 任务 / 历史 / 技能 ================= -->
+    <Style x:Key="TabBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="0,7,0,11"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="0,0,0,2"
+                            BorderBrush="Transparent" Padding="{TemplateBinding Padding}" x:Name="bd">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="Tag" Value="cur">
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource P1Brush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 小型圆角按钮：添加项目等（文字/边框与侧栏分组小标题同色 DimBrush） ================= -->
+    <Style x:Key="AddBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource CmtBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4" Padding="{TemplateBinding Padding}" x:Name="bd">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" UseLayoutRounding="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#15FFFFFF"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 模型切换胶囊按钮：百炼 / Kimi / 本地 ================= -->
+    <Style x:Key="ModelPill" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Padding" Value="12,5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                        </Trigger>
+                        <Trigger Property="Tag" Value="cur">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource GradAv}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- ================= 架构/编排执行树折叠箭头（全局资源：树节点模板的 StaticResource 在容器脱离可视树时也能兕底命中；架构树与编排树共用动画版） ================= -->
+    <Style x:Key="ArchExpandToggle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Path Data="M5,3 L11,8 L5,13" Stroke="{StaticResource DimBrush}"
+                          StrokeThickness="1.3" Fill="Transparent"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          RenderTransformOrigin="0.5,0.5" SnapsToDevicePixels="False">
+                        <Path.RenderTransform>
+                            <RotateTransform x:Name="rot" Angle="0"/>
+                        </Path.RenderTransform>
+                    </Path>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="rot"
+                                            Storyboard.TargetProperty="Angle"
+                                            From="0" To="90" Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="rot"
+                                            Storyboard.TargetProperty="Angle"
+                                            From="90" To="0" Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- ================= 技能页 本地/市场 深色分段切换按钮：选中段品牌渐变底+白字，未选中段浅色字（Tag=cur 高亮） ================= -->
+    <Style x:Key="SkillViewBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#C7CBD8"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="14,4"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="Transparent" BorderThickness="1"
+                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="Tag" Value="cur">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource GradAv}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 市场行操作按钮（安装/卸载/重试）：深色底+细描边；按条目状态变色——卸载红、失败重试琥珀、安装中置灰 ================= -->
+    <Style x:Key="MarketActBtn" TargetType="Button">
+        <Setter Property="Background" Value="#161824"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="FontSize" Value="11.5"/>
+        <Setter Property="Padding" Value="0,3"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F2130"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#282A3D"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="bd" Property="Opacity" Value="0.45"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <!-- 已安装 → 按钮为"卸载"：红色调描边提示危险操作 -->
+            <DataTrigger Binding="{Binding State}" Value="installed">
+                <Setter Property="Foreground" Value="#FF7B72"/>
+                <Setter Property="BorderBrush" Value="#5AE74C3C"/>
+            </DataTrigger>
+            <!-- 失败 → 按钮为"重试"：琥珀色调描边提示异常 -->
+            <DataTrigger Binding="{Binding State}" Value="failed">
+                <Setter Property="Foreground" Value="{StaticResource AmberBrush}"/>
+                <Setter Property="BorderBrush" Value="#4DF0A13E"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ================= 市场搜索栏“刷新列表/搜索市场”按钮：透明底+细描边，悬停深色微亮（避免默认浅灰悬停） ================= -->
+    <Style x:Key="MarketSearchBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource P2Brush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F2130"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource CmtBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#282A3D"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 深色小图标按钮（如目录册刷新 ↻）：透明底+细描边，悬停提亮 ================= -->
+    <Style x:Key="IconBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1AFFFFFF"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#2AFFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 思考模式开关（标题栏，模型下拉右侧）：开=渐变高亮，关=暗色描边 ================= -->
+    <Style x:Key="ThinkingToggle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                        </Trigger>
+                        <Trigger Property="Tag" Value="on">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource GradAv}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 发送按钮（渐变圆角方块） ================= -->
+    <Style x:Key="SendBtn" TargetType="Button">
+        <Setter Property="Width" Value="38"/>
+        <Setter Property="Height" Value="38"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{StaticResource GradP12}" CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Opacity" Value="0.9"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= @引用按钮（灰底圆角方块，输入框左侧） ================= -->
+    <Style x:Key="RefBtn" TargetType="Button">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="#1AFFFFFF" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#2AFFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 停止按钮（红色圆角方块） ================= -->
+    <Style x:Key="StopBtn" TargetType="Button">
+        <Setter Property="Width" Value="38"/>
+        <Setter Property="Height" Value="38"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="#E74C3C" CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Opacity" Value="0.9"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 侧栏行容器（任务/历史/技能，Border 直包保证文字色继承） ================= -->
+    <Style x:Key="RowBox" TargetType="Border">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="TextElement.Foreground" Value="{StaticResource DimBrush}"/>
+        <Setter Property="TextElement.FontSize" Value="13"/>
+    </Style>
+    <Style x:Key="RowBoxCur" TargetType="Border" BasedOn="{StaticResource RowBox}">
+        <Setter Property="Background" Value="#1F6366F1"/>
+        <Setter Property="BorderBrush" Value="#4D6366F1"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="TextElement.Foreground" Value="{StaticResource TextBrush}"/>
+    </Style>
+
+    <!-- ================= 项目下拉框（深底色，对齐官网 select 样式） ================= -->
+    <Style x:Key="ProjCombo" TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton Focusable="False" ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="bd" Background="{StaticResource CardBrush}"
+                                            BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                            CornerRadius="8" Padding="10,5">
+                                        <Path Data="M0,0 L4,4 L8,0" Stroke="{StaticResource DimBrush}"
+                                              StrokeThickness="1.5" HorizontalAlignment="Right"
+                                              VerticalAlignment="Center" Margin="0,1,2,0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter IsHitTestVisible="False" Margin="8,4,22,4"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          VerticalAlignment="Center"/>
+                        <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True" PopupAnimation="Slide"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush2}"
+                                    BorderThickness="1" CornerRadius="8" Margin="0,4,8,8">
+                                <ScrollViewer Style="{StaticResource HiddenScrollViewer}" MaxHeight="240" Padding="0,4">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 标题栏模型下拉：ProjCombo 的紧凑版 -->
+    <Style x:Key="ModelCombo" TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+        <Setter Property="FontSize" Value="11.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton Focusable="False" ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="bd" Background="{StaticResource CardBrush}"
+                                            BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                            CornerRadius="8" Padding="10,5">
+                                        <Path Data="M0,0 L4,4 L8,0" Stroke="{StaticResource DimBrush}"
+                                              StrokeThickness="1.5" HorizontalAlignment="Right"
+                                              VerticalAlignment="Center" Margin="0,1,2,0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter IsHitTestVisible="False" Margin="8,4,22,4"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          VerticalAlignment="Center"/>
+                        <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True" PopupAnimation="Slide"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush2}"
+                                    BorderThickness="1" CornerRadius="8" Margin="0,4,8,8">
+                                <ScrollViewer x:Name="DropScroll" MaxHeight="240" Padding="0,4"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Disabled">
+                                    <ScrollViewer.Template>
+                                        <ControlTemplate TargetType="ScrollViewer">
+                                            <Grid Background="Transparent">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ScrollContentPresenter Grid.Column="0" Margin="{TemplateBinding Padding}"/>
+                                                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1"
+                                                           Style="{StaticResource NarrowScrollBar}" Orientation="Vertical"
+                                                           Minimum="0"
+                                                           Maximum="{TemplateBinding ScrollableHeight}"
+                                                           Value="{TemplateBinding VerticalOffset}"
+                                                           ViewportSize="{TemplateBinding ViewportHeight}"
+                                                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ScrollViewer.Template>
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 思考等级下拉：选中具体档位时 Tag=on，外观对齐"思考"按钮开态（渐变底+白字）；选中"关闭"时 Tag=null 保持普通下拉观感 -->
+    <Style x:Key="ThinkingLevelCombo" TargetType="ComboBox" BasedOn="{StaticResource ModelCombo}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <Border x:Name="bd" Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                CornerRadius="8" Padding="10,5">
+                            <Path x:Name="arrow" Data="M0,0 L4,4 L8,0" Stroke="{StaticResource DimBrush}"
+                                  StrokeThickness="1.5" HorizontalAlignment="Right"
+                                  VerticalAlignment="Center" Margin="0,1,2,0"/>
+                        </Border>
+                        <ToggleButton Focusable="False" ClickMode="Press" Background="Transparent"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="Transparent"/>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter IsHitTestVisible="False" Margin="8,4,6,4"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                        <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True" PopupAnimation="Slide"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush2}"
+                                    BorderThickness="1" CornerRadius="8" Margin="0,4,8,8">
+                                <ScrollViewer Style="{StaticResource HiddenScrollViewer}" MaxHeight="240" Padding="0,4">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Tag" Value="on">
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource GradAv}"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="Transparent"/>
+                            <Setter TargetName="arrow" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="Tag" Value="off">
+                            <Setter TargetName="arrow" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 深色右键菜单（全局隐式）：卡片底+细边框+圆角，悬停主紫半透；对齐 ProjCombo 弹层观感 -->
+    <Style TargetType="ContextMenu">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush2}"
+                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="4"
+                            SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.5" Color="#000000"/>
+                        </Border.Effect>
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.TabNavigation="Cycle"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    <!-- 菜单项/分隔线样式改放 App 级全局样式（见下方 Separator/MenuItem 全局样式）：
+         内嵌于 ContextMenu.Style.Resources 时，弹出菜单的项在样式解析时序上可能命不中（
+         表现即：菜单深色卡片生效但分隔线缩进/项带系统默认图标列）。
+         MenuItem 走隐式样式；Separator 须走 MenuItem.SeparatorStyleKey 键样式（见下方说明）。 -->
+    </Style>
+
+    <!-- App 级全局 MenuItem / Separator（不内嵌在 ContextMenu.Style.Resources）：
+         菜单/ContextMenu 内的 Separator 必须用 MenuItem.SeparatorStyleKey 键样式——WPF 已知问题
+         (dotnet/wpf#7268)：菜单项中的 Separator 不参与隐式样式查找，只按该键显式取样式；
+         单纯定义 <Style TargetType="Separator"> 对菜单分隔线无效（表现：沿用系统模板，
+         分隔线左侧留大片缩进、不顶到最左）。放在 ResourceDictionary 根供任何菜单沿逻辑树命中。 -->
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Height="1" Background="{StaticResource BorderBrush2}" Margin="0,3"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="MenuItem">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="FontSize" Value="12.5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="Margin" Value="2,1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border x:Name="bd" Background="Transparent" CornerRadius="6"
+                            Padding="{TemplateBinding Padding}" Margin="{TemplateBinding Margin}">
+                        <ContentPresenter ContentSource="Header" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#336366F1"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- App 级深色 ComboBoxItem 样式（供 MainWindow / AutoTaskDialog 的 StaticResource 与代码 FindResource 共用） -->
+    <Style x:Key="DarkComboItem" TargetType="ComboBoxItem">
+        <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderThickness="0" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============ 选中/悬停底色统一规范（全局隐式兑底） ============
+         问题背景：ListBox/TreeView/数据绑定 ComboBox 未设 ItemContainerStyle 时，项容器落入系统默认模板——
+         深色界面上悬停浅蓝条、选中失焦后变系统灰白底（IsSelectionActive=False 切换 ControlBrushKey）。
+         对策：以下三类容器均建全局隐式样式（无 x:Key），任何无显式样式的容器自动纳入深色规范——
+         选中底色焦点内/外一致（失焦保持不褪白），悬停统一半透紫（同右键菜单/下拉项），新增控件零遗漏。
+         已自带 ItemContainerStyle 的树（主窗口四处）不受影响（显式优先）。 -->
+
+    <!-- 树展开/收缩箭头（> 和 v 折线，16×16 无纹理）：供隐式 TreeViewItem 模板与自绘树复用 -->
+    <Style x:Key="TreeExpandToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="Transparent" Width="16" Height="16" Padding="4,4,4,4">
+                        <Path x:Name="ExpandPath" Fill="Transparent" Stroke="#8888A0" StrokeThickness="1.5"
+                              StrokeLineJoin="Round" Data="M 1 0 L 5 4 L 1 8"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ExpandPath" Property="Data" Value="M 0 1 L 4 5 L 8 1"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 隐式 ComboBoxItem：数据绑定下拉（模型切换/思考等级等动态项）悬停/选中统一半透紫（下拉关闭即消失，无失焦态） -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="10,7"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 隐式 ListBoxItem：候选列表等所有 ListBox 项——悬停半透紫、选中略深、失焦保持不褪白 -->
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="6,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="bd" Background="Transparent" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1F6366F1"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#306366F1"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="bd" Property="Background" Value="#306366F1"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 隐式 TreeViewItem：无自带样式的树（确认方案任务树等）——深色底上选中 #26304E 焦点内/外一致，
+         层级缩进由每层 19px 箭头列递归提供（与主窗口四树同构）；叶子无箭头占位对齐 -->
+    <Style TargetType="TreeViewItem">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="Padding" Value="2,2"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeViewItem">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="19" Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ToggleButton x:Name="Expander" ClickMode="Press"
+                                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Style="{StaticResource TreeExpandToggleStyle}"/>
+                        <Border x:Name="Bd" Grid.Column="1" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="PART_Header" ContentSource="Header"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+                        </Trigger>
+                        <!-- 选中背景：焦点内/外统一 #26304E（同主窗口树选中色，防失焦转系统灰白底） -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#26304E"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="#26304E"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ================= 编排会话对话框深浅按钮（OrchSessionInputDialog 新建编排会话弹窗使用；
+         样式与 AutoTaskDialog/PlanConfirmDialog 的 DialogPrimaryBtn/DialogSecondaryBtn 一致，换 key 名避免与各窗口
+         局部 <Window.Resources> 中同名样式混淆；深色底/浅色字，融入暗色主题） ================= -->
+    <Style x:Key="OrchDialogPrimaryBtn" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource GradP12}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Opacity" Value="0.88"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Opacity" Value="0.72"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="OrchDialogSecondaryBtn" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#1C1D29"/>
+                            <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="#2B2D3A"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

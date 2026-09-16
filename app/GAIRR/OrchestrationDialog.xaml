@@ -1,0 +1,130 @@
+<!--
+  编排任务创建对话框（P2）：输入标题 + L0 目标、选规划模式（标准/多模型商讨），
+  点"开始规划"后后台跑 PlanNegotiator，进度行实时回显；成功返回 Plan 供确认对话框展示。
+-->
+<Window x:Class="GAIRR.OrchestrationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="新建编排任务" Width="680" Height="560" MinWidth="620" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Microsoft YaHei, PingFang SC, sans-serif"
+        ResizeMode="CanResizeWithGrip" WindowStyle="None">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="DlgPrimaryBtn" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource GradP12}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="0.88"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.45"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="DlgSecondaryBtn" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource DimBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1" CornerRadius="10">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题行 -->
+            <DockPanel Grid.Row="0">
+                <TextBlock Text="新建编排任务" FontSize="17" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
+                <TextBlock x:Name="tbPhase" DockPanel.Dock="Right" HorizontalAlignment="Right" FontSize="12"
+                           Foreground="{StaticResource DimBrush}" VerticalAlignment="Center"/>
+            </DockPanel>
+
+            <!-- 标题输入 -->
+            <TextBlock Grid.Row="1" Text="任务标题（可留空，由目标截断生成）" FontSize="12"
+                       Foreground="{StaticResource DimBrush}" Margin="0,14,0,4"/>
+            <TextBox Grid.Row="2" x:Name="tbTitle" FontSize="13" Height="30" VerticalContentAlignment="Center"
+                     Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                     BorderBrush="{StaticResource BorderBrush2}" CaretBrush="{StaticResource TextBrush}"/>
+
+            <!-- L0 目标 -->
+            <TextBlock Grid.Row="3" Text="L0 目标（完整描述要交付的功能/项目级目标）" FontSize="12"
+                       Foreground="{StaticResource DimBrush}" Margin="0,12,0,4"/>
+            <TextBox Grid.Row="4" x:Name="tbGoal" FontSize="13" Height="96" TextWrapping="Wrap"
+                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                     Background="{StaticResource CardBrush}" Foreground="{StaticResource TextBrush}"
+                     BorderBrush="{StaticResource BorderBrush2}" CaretBrush="{StaticResource TextBrush}"/>
+
+            <!-- 规划模式 + 进度 -->
+            <StackPanel Grid.Row="5" Margin="0,12,0,0">
+                <TextBlock Text="规划模式" FontSize="12" Foreground="{StaticResource DimBrush}" Margin="0,0,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="rbStandard" Content="标准（当前模型）" FontSize="13" IsChecked="True"
+                                 Foreground="{StaticResource TextBrush}" GroupName="planMode" Margin="0,0,18,0"/>
+                    <RadioButton x:Name="rbNegotiation" Content="多模型商讨" FontSize="13"
+                                 Foreground="{StaticResource TextBrush}" GroupName="planMode"/>
+                </StackPanel>
+                <TextBlock x:Name="tbModeHint" FontSize="11" Foreground="{StaticResource DimBrush}" Margin="0,4,0,0"
+                           Text="标准：单个当前模型生成方案（快、成本低）" TextWrapping="Wrap"/>
+                <!-- 规划进度行 -->
+                <ScrollViewer x:Name="progressScroll" Margin="0,10,0,0" MaxHeight="120" Visibility="Collapsed"
+                              VerticalScrollBarVisibility="Auto" Background="#1AFFFFFF">
+                    <TextBlock x:Name="tbProgress" FontSize="11" Foreground="{StaticResource DimBrush}"
+                               TextWrapping="Wrap" Padding="8,6"/>
+                </ScrollViewer>
+            </StackPanel>
+
+            <!-- 按钮 -->
+            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                <Button x:Name="btnCancel" Content="取消" Width="90" Height="34" Style="{StaticResource DlgSecondaryBtn}"
+                        Click="OnCancel" Margin="0,0,10,0"/>
+                <Button x:Name="btnStart" Content="开始规划" Width="130" Height="34" Style="{StaticResource DlgPrimaryBtn}"
+                        Click="OnStart"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

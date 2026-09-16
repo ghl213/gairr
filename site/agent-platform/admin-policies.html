@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>策略管理 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-08</span><span class="sep">/</span><b>策略管理</b></div>
+ <div class="grow"></div>
+ <button class="btn btn-sm" data-ico="play" data-demo="打开规则模拟器">规则模拟器</button>
+ <button class="btn btn-sm" data-ico="file" data-demo="查看判定日志">判定日志</button>
+ <button class="btn btn-primary btn-sm" data-ico="plus" data-demo="新建策略">新建策略</button>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">管</span></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">治理域 · 策略引擎</div>
+ <h1 class="h1 mt-2">策略管理</h1>
+ <p class="page-desc">策略是五元组判定：<span class="mono t-sm">主体 + 工具 + 参数条件 → 动作</span>。自上而下取第一条匹配，命中即停止；未命中走默认拒绝（fail-closed）。</p>
+ </div>
+ <div class="page-actions">
+ <div class="seg" data-seg><button class="is-on">策略表</button><button>脱敏规则</button><button>模拟器</button></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="alert alert-warn mb-4">
+ <span data-ico="alert"></span>
+ <div class="grow"><b>上线前提醒：</b>策略变更立即生效且不影响进行中的会话。历史会话按各自创建时的策略快照判定，因此变更不会追溯。</div>
+ </div>
+
+ <div class="grid g-4 mb-4">
+ <div class="kpi"><span class="kpi-label">启用策略</span><span class="kpi-value">18<small>条</small></span><span class="kpi-foot">禁用 4 条 · 草稿 2 条</span></div>
+ <div class="kpi is-ok"><span class="kpi-label">今日放行</span><span class="kpi-value">12.6<small>K</small></span><span class="kpi-foot">占调用 96.2%</span></div>
+ <div class="kpi is-warn"><span class="kpi-label">今日转审批</span><span class="kpi-value">418<small>次</small></span><span class="kpi-foot">平均等待 3.4 分钟</span></div>
+ <div class="kpi is-danger"><span class="kpi-label">今日拒绝</span><span class="kpi-value">72<small>次</small></span><span class="kpi-foot">其中 61 次为 PII 外发</span></div>
+ </div>
+
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th style="width:52px" class="num">优先级</th><th>策略名</th><th>主体</th><th>工具 / 动作</th><th>参数条件</th><th>处置</th><th>状态</th><th></th></tr></thead>
+ <tbody>
+ <tr class="is-selected">
+ <td class="num">1</td>
+ <td><div class="cell-2"><span class="l1">禁止外发 PII</span><span class="l2">pol_pii_block</span></div></td>
+ <td class="t-sm">全部角色</td><td class="mono t-sm">* （所有工具）</td>
+ <td class="mono t-xs">args contains 身份证 / 银行卡 / 手机号</td>
+ <td><span class="tag tag-danger">拒绝</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">2</td>
+ <td><div class="cell-2"><span class="l1">退款金额超限需审批</span><span class="l2">pol_refund_approval</span></div></td>
+ <td class="t-sm">普通成员</td><td class="mono t-sm">refund_apply</td>
+ <td class="mono t-xs">args.amount &gt; 500</td>
+ <td><span class="tag tag-warn">转审批</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">3</td>
+ <td><div class="cell-2"><span class="l1">生产库写操作仅限运维</span><span class="l2">pol_prod_write</span></div></td>
+ <td class="t-sm">非「运维工程师」</td><td class="mono t-sm">db_execute</td>
+ <td class="mono t-xs">target = "prod-*"</td>
+ <td><span class="tag tag-danger">拒绝</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">4</td>
+ <td><div class="cell-2"><span class="l1">单次调用金额上限</span><span class="l2">pol_amount_cap</span></div></td>
+ <td class="t-sm">全部角色</td><td class="mono t-sm">refund_apply / payment_*</td>
+ <td class="mono t-xs">args.amount &gt; 50000</td>
+ <td><span class="tag tag-danger">拒绝</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">5</td>
+ <td><div class="cell-2"><span class="l1">外部域名白名单</span><span class="l2">pol_egress_allow</span></div></td>
+ <td class="t-sm">全部角色</td><td class="mono t-sm">http_fetch</td>
+ <td class="mono t-xs">url.host not in whitelist</td>
+ <td><span class="tag tag-warn">转审批</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">6</td>
+ <td><div class="cell-2"><span class="l1">跨租户数据访问</span><span class="l2">pol_cross_tenant</span></div></td>
+ <td class="t-sm">全部角色</td><td class="mono t-sm">* </td>
+ <td class="mono t-xs">args.tenant_id != session.tenant_id</td>
+ <td><span class="tag tag-danger">拒绝</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="编辑策略">编辑</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">7</td>
+ <td><div class="cell-2"><span class="l1">夜间批量导出限制</span><span class="l2">pol_bulk_export</span></div></td>
+ <td class="t-sm">普通成员</td><td class="mono t-sm">bulk_export</td>
+ <td class="mono t-xs">at(hour) between 0 and 6</td>
+ <td><span class="tag tag-warn">转审批</span></td><td><span class="tag tag-outline"><span class="td"></span>已禁用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="启用策略">启用</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td class="num">99</td>
+ <td><div class="cell-2"><span class="l1">默认拒绝（兜底）</span><span class="l2">pol_default_deny</span></div></td>
+ <td class="t-sm">—</td><td class="mono t-sm">*</td>
+ <td class="mono t-xs">（无条件）</td>
+ <td><span class="tag tag-danger">拒绝</span></td><td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="查看策略">查看</button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 24 条策略 · 拖拽行首手柄可调整优先级</span><div class="pager-btns"><button class="btn btn-sm" data-ico="check" data-demo="保存顺序">保存顺序</button></div></div>
+ </div>
+
+ <div class="card mt-4">
+ <div class="card-head">
+ <span class="card-title grow">加价与毛利规则（price_rule）</span>
+ <span class="card-sub">占位默认值，待客户校准</span>
+ <button class="btn btn-sm" data-ico="plus" data-demo="新增加价规则">新增</button>
+ </div>
+ <div class="card-body col gap-3">
+ <div class="alert alert-info"><span data-ico="settings"></span><div class="grow"><b>可配置项：</b>加价率 / 客户等级系数 / 最低毛利保护全部存 <span class="code">price_rule</span> 表并在此可视化编辑，不硬编码。P0 先用占位默认值跑通「录入-加价-试算毛利-出单」，客户给定数值后仅改配置、不改代码。优先级：<b>具体客户 &gt; 品类 &gt; 全局</b>。</div></div>
+ <div class="table-wrap" style="border:none">
+ <table class="data compact">
+ <thead><tr><th>范围</th><th>类型</th><th class="num">取值</th><th class="num">最低毛利</th><th>需审批</th><th></th></tr></thead>
+ <tbody>
+ <tr><td>全局</td><td>按比例加价</td><td class="num mono">8%</td><td class="num mono">6%</td><td><span class="tag tag-outline">否</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑规则">编辑</button><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td>品类 · 紧固件</td><td>按比例加价</td><td class="num mono">12%</td><td class="num mono">—</td><td><span class="tag tag-outline">否</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑规则">编辑</button><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td>品类 · 标准件</td><td>按比例加价</td><td class="num mono">5%</td><td class="num mono">—</td><td><span class="tag tag-outline">否</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑规则">编辑</button><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td>客户 · 甲客户</td><td>等级系数 A</td><td class="num mono">1.0</td><td class="num mono">—</td><td><span class="tag tag-outline">否</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑规则">编辑</button><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td>客户 · 乙客户</td><td>等级系数 B</td><td class="num mono">1.1</td><td class="num mono">—</td><td><span class="tag tag-warn">是</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑规则">编辑</button><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ </tbody>
+ </table>
+ </div>
+ <div class="t-xs muted">取值均为占位默认值，以客户确认为准；命中「最低毛利」或「需审批」的行一律进审批中心，H5 可收审批卡。</div>
+ </div>
+ </div>
+
+ <div class="grid g-2 mt-5">
+
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">规则模拟器</span><span class="card-sub">不改线上状态</span></div>
+ <div class="card-body col gap-3">
+ <div class="form-grid">
+ <div class="field"><label class="field-label">主体</label><select class="select"><option>普通成员 · 赵苓（星海科技）</option><option>Agent 构建者 · 陈可</option></select></div>
+ <div class="field"><label class="field-label">工具</label><select class="select"><option>refund_apply</option><option>kb_search</option><option>http_fetch</option></select></div>
+ <div class="field span-all"><label class="field-label">参数（JSON）</label><textarea class="textarea" style="min-height:80px">{ "order_id": "ST-20260928-4471", "amount": 1280, "reason": "无理由退货" }</textarea></div>
+ </div>
+ <div class="row row-gap"><button class="btn btn-primary btn-sm" data-ico="play" data-demo="执行模拟">执行模拟</button><button class="btn btn-sm" data-demo="清空">清空</button></div>
+ <div class="alert alert-warn"><span data-ico="alert"></span><div class="grow"><b>判定结果：转审批</b> · 命中策略 <span class="code code-brand">pol_refund_approval</span>（优先级 2）<br>审批人：财务审批人 · SLA 15 分钟</div></div>
+ <div class="json-view">
+ <div class="json-line"><span class="json-k">"decision"</span><span>: <span class="json-s">"require_approval"</span>,</span></div>
+ <div class="json-line"><span class="json-k">"matched"</span><span>: <span class="json-s">"pol_refund_approval"</span>,</span></div>
+ <div class="json-line"><span class="json-k">"evaluated"</span><span>: [<span class="json-s">"pol_pii_block"</span>, <span class="json-s">"pol_refund_approval"</span>],</span></div>
+ <div class="json-line"><span class="json-k">"reason"</span><span>: <span class="json-s">"amount 1280 &gt; limit 500"</span></span></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="col gap-4">
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">脱敏规则</span><button class="btn btn-sm" data-ico="plus" data-demo="新增脱敏规则">新增</button></div>
+ <div class="card-body tight">
+ <div class="table-wrap" style="border:none">
+ <table class="data compact">
+ <thead><tr><th>字段</th><th>策略</th><th>示例</th><th></th></tr></thead>
+ <tbody>
+ <tr><td class="mono t-sm">手机号</td><td><span class="tag tag-brand">掩码中 4 位</span></td><td class="mono t-xs">138****6412</td><td class="actions"><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td class="mono t-sm">身份证</td><td><span class="tag tag-brand">全掩码</span></td><td class="mono t-xs">**************</td><td class="actions"><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td class="mono t-sm">银行卡</td><td><span class="tag tag-brand">保留后 4 位</span></td><td class="mono t-xs">**** **** 8821</td><td class="actions"><label class="switch"><input type="checkbox" checked><i></i></label></td></tr>
+ <tr><td class="mono t-sm">邮箱</td><td><span class="tag tag-brand">掩码 @ 前</span></td><td class="mono t-xs">l***@xinghai.com</td><td class="actions"><label class="switch"><input type="checkbox"><i></i></label></td></tr>
+ </tbody>
+ </table>
+ </div>
+ <div class="card-foot t-xs muted">脱敏在「工具返回 → 模型输入」环节执行，原始值仅存于加密审计库。</div>
+ </div>
+
+ <div class="card">
+ <div class="card-head"><span class="card-title grow">最近判定日志</span><a class="btn btn-sm btn-ghost" href="admin-audit.html">去审计</a></div>
+ <div class="card-body tight">
+ <div class="noti unread"><span class="ni" data-ico="alert"></span><div class="grow"><div class="t-sm"><b>拒绝</b> · pol_pii_block · 赵苓</div><div class="t-xs dim mono">11:42:08 · 请求含 13 位数字串触发银行卡规则</div></div></div>
+ <div class="noti"><span class="ni" data-ico="check"></span><div class="grow"><div class="t-sm"><b>转审批</b> · pol_refund_approval · 陈可</div><div class="t-xs dim mono">11:38:51 · amount=1280</div></div></div>
+ <div class="noti"><span class="ni" data-ico="check"></span><div class="grow"><div class="t-sm"><b>放行</b> · 无匹配 · 李维</div><div class="t-xs dim mono">11:36:02 · kb_search（只读，默认放行规则）</div></div></div>
+ <div class="noti"><span class="ni" data-ico="alert"></span><div class="grow"><div class="t-sm"><b>拒绝</b> · pol_cross_tenant · API Token</div><div class="t-xs dim mono">11:30:17 · tenant_id 不匹配</div></div></div>
+ </div>
+ </div>
+ </div>
+
+ </div>
+
+ </div>
+ </main>
+</div>
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

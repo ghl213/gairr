@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>用户与角色 · Agent 平台管理端</title>
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/layout.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/patterns.css">
+</head>
+<body data-shell="admin">
+<div class="app">
+
+ <aside id="app-nav"></aside>
+
+ <header class="app-top">
+ <button class="icon-btn" data-nav-toggle data-ico="menu" title="折叠导航"></button>
+ <div class="top-sep"></div>
+ <div class="top-crumb"><span class="mono t-xs">A-03</span><span class="sep">/</span><b>用户与角色</b></div>
+ <div class="grow"></div>
+ <span class="input-icon" style="width:240px"><span data-ico="search"></span><input class="input input-sm" placeholder="搜索姓名 / 邮箱 / 工号"></span>
+ <button class="icon-btn" data-theme-toggle title="切换主题"></button>
+ <button class="who" data-demo="账户菜单"><span class="avatar">管</span><span class="t-sm nav-foot-meta">平台管理员</span></button>
+ </header>
+
+ <main class="app-main">
+ <div class="page">
+
+ <div class="page-head">
+ <div class="page-head-top">
+ <div>
+ <div class="eyebrow">操作域 · 身份</div>
+ <h1 class="h1 mt-2">用户与角色</h1>
+ <p class="page-desc">角色决定可见范围与可执行动作，授权可带失效期。管理员的一切授权变更都会写入审计链，且不可删除。</p>
+ </div>
+ <div class="page-actions">
+ <button class="btn" data-ico="download" data-demo="导出用户清单">导出</button>
+ <button class="btn" data-ico="refresh" data-demo="从目录同步">从目录同步</button>
+ <button class="btn btn-primary" data-ico="plus" data-demo="邀请成员">邀请成员</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="tabs" data-tabs="#us-root">
+ <button class="tab is-on" data-tab="list">成员 <span class="cnt">846</span></button>
+ <button class="tab" data-tab="roles">角色与权限 <span class="cnt">6</span></button>
+ <button class="tab" data-tab="pending">待接受邀请 <span class="cnt">12</span></button>
+ </div>
+
+ <div id="us-root">
+
+ <div class="tabpane is-on" data-pane="list">
+ <div class="toolbar">
+ <select class="select" style="width:150px"><option>全部租户</option><option>星海科技</option><option>云图设计</option><option>内部 · 平台自用</option></select>
+ <select class="select" style="width:150px"><option>全部角色</option><option>租户管理员</option><option>Agent 构建者</option><option>审批人</option><option>普通成员</option><option>审计员</option></select>
+ <select class="select" style="width:150px"><option>全部状态</option><option>启用</option><option>已停用</option><option>待激活</option></select>
+ <button class="btn" data-ico="filter" data-demo="高级筛选">筛选</button>
+ </div>
+
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>成员</th><th>租户</th><th>角色</th><th class="num">近 30 天会话</th><th class="num">最近登录</th><th>状态</th><th></th></tr></thead>
+ <tbody>
+ <tr>
+ <td><div class="row gap-3"><span class="avatar">李</span><div class="cell-2"><span class="l1">李维</span><span class="l2">liwei@xinghai.com</span></div></div></td>
+ <td>星海科技</td><td><span class="tag tag-violet">租户管理员</span></td>
+ <td class="num">1,204</td><td class="num">3 分钟前</td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-drawer-open="dw-grant" data-ico="shield">授权</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="row gap-3"><span class="avatar">陈</span><div class="cell-2"><span class="l1">陈可</span><span class="l2">chenke@xinghai.com</span></div></div></td>
+ <td>星海科技</td><td><span class="tag tag-brand">Agent 构建者</span></td>
+ <td class="num">862</td><td class="num">27 分钟前</td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-drawer-open="dw-grant" data-ico="shield">授权</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="row gap-3"><span class="avatar">王</span><div class="cell-2"><span class="l1">王叙</span><span class="l2">wangxu@yuntu.design</span></div></div></td>
+ <td>云图设计</td><td><span class="tag tag-warn">审批人</span></td>
+ <td class="num">318</td><td class="num">2 小时前</td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-drawer-open="dw-grant" data-ico="shield">授权</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="row gap-3"><span class="avatar">赵</span><div class="cell-2"><span class="l1">赵苓</span><span class="l2">zhaoling@hengxin.cn</span></div></div></td>
+ <td>恒信物流</td><td><span class="tag tag-outline">普通成员</span></td>
+ <td class="num">96</td><td class="num">昨天 18:20</td>
+ <td><span class="tag tag-ok"><span class="td"></span>启用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-drawer-open="dw-grant" data-ico="shield">授权</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ <tr>
+ <td><div class="row gap-3"><span class="avatar">周</span><div class="cell-2"><span class="l1">周垚</span><span class="l2">zhouy@internal</span></div></div></td>
+ <td>内部 · 平台自用</td><td><span class="tag tag-info">审计员</span></td>
+ <td class="num">12</td><td class="num">5 天前</td>
+ <td><span class="tag tag-danger"><span class="td"></span>已停用</span></td>
+ <td class="actions"><button class="btn btn-sm" data-demo="恢复成员">恢复</button><button class="icon-btn" data-ico="more" data-demo="更多操作"></button></td>
+ </tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>共 846 名成员 · 第 1 / 57 页</span>
+ <div class="pager-btns"><button>‹</button><button class="is-on">1</button><button>2</button><button>3</button><button>…</button><button>›</button></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="tabpane" data-pane="roles">
+ <div class="grid g-2-1">
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>角色</th><th>说明</th><th class="num">成员数</th><th>关键权限</th><th></th></tr></thead>
+ <tbody>
+ <tr><td class="row-strong">平台管理员</td><td class="t-sm muted">跨租户全局管理</td><td class="num">3</td><td><span class="tag tag-violet">*</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ <tr><td class="row-strong">租户管理员</td><td class="t-sm muted">本租户内全部资源</td><td class="num">18</td><td><span class="tag tag-info">tenant:*</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ <tr><td class="row-strong">Agent 构建者</td><td class="t-sm muted">创建与发布 Agent</td><td class="num">146</td><td><span class="tag tag-info">agent:write</span> <span class="tag tag-outline">tool:read</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ <tr><td class="row-strong">审批人</td><td class="t-sm muted">处理高风险工具审批</td><td class="num">54</td><td><span class="tag tag-warn">approval:decide</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ <tr><td class="row-strong">普通成员</td><td class="t-sm muted">仅对话与个人用量</td><td class="num">612</td><td><span class="tag tag-outline">chat:*</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ <tr><td class="row-strong">审计员</td><td class="t-sm muted">只读审计与报表</td><td class="num">13</td><td><span class="tag tag-info">audit:read</span></td><td class="actions"><button class="btn btn-sm" data-demo="编辑角色">编辑</button></td></tr>
+ </tbody>
+ </table>
+ </div>
+ <div class="card card-pad">
+ <div class="strong">角色设计原则</div>
+ <ul class="t-sm muted mt-2" style="padding-left:18px;list-style:disc;line-height:1.9">
+ <li>最小权限：默认只给普通成员，按需叠加</li>
+ <li>职责分离：审批人不可同时创建 Agent</li>
+ <li>可追溯：每次授权写入审计链并留失效期</li>
+ <li>不设「超级用户」共享账号</li>
+ </ul>
+ <div class="alert alert-info mt-4"><span data-ico="alert"></span><div class="grow">角色模板由平台维护，租户管理员只能在其子集内分配。</div></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="tabpane" data-pane="pending">
+ <div class="table-wrap">
+ <table class="data">
+ <thead><tr><th>被邀请人</th><th>租户</th><th>预置角色</th><th class="num">发出时间</th><th class="num">失效时间</th><th></th></tr></thead>
+ <tbody>
+ <tr><td class="mono t-sm">sunqi@xinghai.com</td><td>星海科技</td><td><span class="tag tag-brand">Agent 构建者</span></td><td class="num">09-30 10:12</td><td class="num">10-07</td><td class="actions"><button class="btn btn-sm" data-demo="重发邀请">重发</button><button class="btn btn-ghost btn-sm" data-demo="撤销邀请">撤销</button></td></tr>
+ <tr><td class="mono t-sm">huang@yuntu.design</td><td>云图设计</td><td><span class="tag tag-outline">普通成员</span></td><td class="num">09-29 14:40</td><td class="num">10-06</td><td class="actions"><button class="btn btn-sm" data-demo="重发邀请">重发</button><button class="btn btn-ghost btn-sm" data-demo="撤销邀请">撤销</button></td></tr>
+ <tr><td class="mono t-sm">tmp-poc@yuanjian.com</td><td>远见咨询（试用）</td><td><span class="tag tag-warn">审批人</span></td><td class="num">10-01 09:05</td><td class="num">10-08</td><td class="actions"><button class="btn btn-sm" data-demo="重发邀请">重发</button><button class="btn btn-ghost btn-sm" data-demo="撤销邀请">撤销</button></td></tr>
+ </tbody>
+ </table>
+ <div class="pager"><span>待接受邀请 12 条，超时未接受将自动失效</span><div class="pager-btns"><button class="btn btn-sm" data-ico="refresh" data-demo="全部重发">全部重发</button></div></div>
+ </div>
+ </div>
+
+ </div>
+
+ </div>
+ </main>
+</div>
+
+<div class="scrim" id="dw-grant-scrim"></div>
+<aside class="drawer" id="dw-grant">
+ <div class="drawer-head">
+ <div class="row gap-3 grow"><span class="avatar lg">李</span><div class="cell-2"><span class="l1">李维</span><span class="l2">liwei@xinghai.com · 星海科技</span></div></div>
+ <button class="icon-btn" data-drawer-close="dw-grant" data-ico="x" title="关闭"></button>
+ </div>
+ <div class="drawer-body col gap-4">
+ <div class="tabs" data-tabs="#grant-root">
+ <button class="tab is-on" data-tab="g1">角色</button>
+ <button class="tab" data-tab="g2">资源范围</button>
+ <button class="tab" data-tab="g3">历史</button>
+ </div>
+ <div id="grant-root">
+ <div class="tabpane is-on" data-pane="g1">
+ <div class="col gap-3">
+ <label class="check"><input type="checkbox" checked> 租户管理员 · 本租户全部资源</label>
+ <label class="check"><input type="checkbox" checked> Agent 构建者 · 创建与发布 Agent</label>
+ <label class="check"><input type="checkbox"> 审批人 · 处理高风险工具审批</label>
+ <label class="check"><input type="checkbox"> 审计员 · 只读审计日志</label>
+ </div>
+ <div class="field mt-4"><label class="field-label">授权失效期</label><select class="select"><option>永久（跟随成员状态）</option><option>90 天后自动回收</option><option>指定日期</option></select><span class="field-hint">临时项目建议设置自动回收</span></div>
+ </div>
+ <div class="tabpane" data-pane="g2">
+ <div class="col gap-3">
+ <div class="field"><label class="field-label">可见 Agent</label><select class="select"><option>全部（37 个）</option><option>仅自己创建的</option><option>指定清单</option></select></div>
+ <div class="field"><label class="field-label">可访问知识库</label><select class="select"><option>本租户全部（6 个）</option><option>仅公开库</option><option>指定清单</option></select></div>
+ <div class="field"><label class="field-label">工具调用上限</label><select class="select"><option>只读工具</option><option>读写工具（写操作需审批）</option><option>不限制（仅管理员）</option></select></div>
+ </div>
+ </div>
+ <div class="tabpane" data-pane="g3">
+ <div class="timeline">
+ <div class="tl-node k-ok"><div class="tl-head"><span class="tl-seq">03</span><span class="tl-name">授予 Agent 构建者</span><span class="tl-time">09-12 14:02</span></div><div class="tl-body">操作人：平台管理员 · 原因：项目投入</div></div>
+ <div class="tl-node k-approval"><div class="tl-head"><span class="tl-seq">02</span><span class="tl-name">临时授予审批人（已到期回收）</span><span class="tl-time">08-01 09:30</span></div><div class="tl-body">操作人：平台管理员 · 失效期 08-31</div></div>
+ <div class="tl-node k-llm"><div class="tl-head"><span class="tl-seq">01</span><span class="tl-name">加入租户 · 初始角色普通成员</span><span class="tl-time">07-20 10:15</span></div><div class="tl-body">来源：目录同步（Azure AD）</div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="drawer-foot">
+ <button class="btn" data-drawer-close="dw-grant">取消</button>
+ <button class="btn btn-primary" data-demo="保存授权">保存授权</button>
+ </div>
+</aside>
+
+<script src="assets/app.js"></script>
+<script src="assets/pages.js"></script>
+</body>
+</html>

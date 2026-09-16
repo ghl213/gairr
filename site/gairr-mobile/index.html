@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <!-- Open Graph 分享预览 -->
+    <meta property="og:title" content="GAIRR Mobile">
+    <meta property="og:description" content="GAIRR 手机端智能助手 - 随时随地管理 AI 会话">
+    <meta property="og:image" content="http://8.136.112.142/app/icon-192.png">
+    <meta property="og:url" content="http://8.136.112.142/app/">
+    <meta property="og:type" content="website">
+    <!-- Twitter 卡片 -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="GAIRR Mobile">
+    <meta name="twitter:description" content="GAIRR 手机端智能助手">
+    <meta name="twitter:image" content="http://8.136.112.142/app/icon-192.png">
+    <title>GAIRR Mobile</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0f0f1a;
+            --surface: #1a1a2e;
+            --surface-light: #252540;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--surface);
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            white-space: nowrap;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--danger);
+            transition: background 0.3s;
+        }
+        
+        .status-dot.connected { background: var(--success); }
+        .status-dot.connecting { background: var(--warning); animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Config Panel */
+        .config-panel {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .config-panel.open {
+            max-height: 300px;
+            padding: 12px 16px;
+        }
+        
+        .config-row {
+            margin-bottom: 10px;
+        }
+        
+        .config-row label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .config-row input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .config-row input:focus {
+            border-color: var(--primary);
+        }
+        
+        .config-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        /* Chat Area */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .message {
+            max-width: 100%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.assistant {
+            align-self: flex-start;
+            background: var(--surface-light);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message.system {
+            align-self: center;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 4px 12px;
+        }
+        
+        .message .time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+        
+        /* Thinking indicator */
+        .thinking {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--surface-light);
+            border-radius: 16px;
+            align-self: flex-start;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .thinking-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .thinking-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .thinking-dots span:nth-child(1) { animation-delay: 0s; }
+        .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        /* Decision Panel */
+        .decision-panel {
+            background: var(--surface);
+            border: 1px solid var(--warning);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 16px;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .decision-title {
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .decision-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .decision-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Input Area */
+        .input-area {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+        }
+        
+        .input-area input:focus {
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover { background: var(--primary-dark); }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 20px;
+        }
+        
+        /* Code block in messages */
+        .message pre {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+        
+        .message code {
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1>GAIRR</h1>
+            <div class="status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">未连接</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-icon" onclick="toggleConfig()" style="width:32px;height:32px;font-size:14px;background:var(--surface-light)">⚙</button>
+        </div>
+    </div>
+    
+    <div class="config-panel" id="configPanel">
+        <div class="config-row">
+            <label>服务器地址</label>
+            <input type="text" id="serverUrl" placeholder="https://your-server.com 或 http://IP:Port" value="">
+        </div>
+        <div class="config-row">
+            <label>Token</label>
+            <input type="password" id="token" placeholder="Bearer Token" value="">
+        </div>
+        <div class="config-row">
+            <label>项目路径</label>
+            <input type="text" id="projectPath" placeholder="如: d:\\work\\gairr" value="">
+        </div>
+        <div class="config-actions">
+            <button class="btn btn-primary" onclick="connect()">连接</button>
+            <button class="btn" onclick="saveConfig()" style="background:var(--surface-light);color:var(--text)">保存</button>
+        </div>
+    </div>
+    
+    <div class="chat-container" id="chatContainer">
+        <div class="message system">点击右上角 ⚙ 配置服务器连接</div>
+    </div>
+    
+    <div id="decisionContainer"></div>
+    
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="输入消息..." 
+               onkeypress="if(event.key==='Enter')sendMessage()" disabled>
+        <button class="btn btn-icon" id="sendBtn" onclick="sendMessage()" disabled>↑</button>
+    </div>
+
+    <script>
+        // ==================== State ====================
+        let state = {
+            serverUrl: localStorage.getItem('gairr_server') || 'http://8.136.112.142/api',
+            token: localStorage.getItem('gairr_token') || 'gairr-mobile-token-2024',
+            projectPath: localStorage.getItem('gairr_project') || 'd:\\work\\gairr',
+            sessionId: null,
+            eventSource: null,
+            isConnected: false,
+            isBusy: false,
+            pendingDecision: null
+        };
+
+        // ==================== Init ====================
+        document.getElementById('serverUrl').value = state.serverUrl;
+        document.getElementById('token').value = state.token;
+        document.getElementById('projectPath').value = state.projectPath;
+
+        if (state.serverUrl && state.token) {
+            connect();
+        }
+
+        // ==================== UI Functions ====================
+        function toggleConfig() {
+            document.getElementById('configPanel').classList.toggle('open');
+        }
+
+        function setStatus(status, text) {
+            const dot = document.getElementById('statusDot');
+            const txt = document.getElementById('statusText');
+            dot.className = 'status-dot ' + status;
+            txt.textContent = text;
+        }
+
+        function addMessage(text, type = 'assistant') {
+            const container = document.getElementById('chatContainer');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            // Simple markdown-like formatting
+            let formatted = text
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+            
+            div.innerHTML = formatted + `<div class="time">${time}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showThinking() {
+            const container = document.getElementById('chatContainer');
+            const existing = document.getElementById('thinkingIndicator');
+            if (existing) existing.remove();
+            
+            const div = document.createElement('div');
+            div.id = 'thinkingIndicator';
+            div.className = 'thinking';
+            div.innerHTML = `
+                <span>思考中</span>
+                <div class="thinking-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideThinking() {
+            const el = document.getElementById('thinkingIndicator');
+            if (el) el.remove();
+        }
+
+        function showDecision(type, content) {
+            const container = document.getElementById('decisionContainer');
+            const isDanger = type === 'danger';
+            const title = isDanger ? '⚠️ 危险命令确认' : '📋 计划审批';
+            const color = isDanger ? 'var(--danger)' : 'var(--warning)';
+            
+            container.innerHTML = `
+                <div class="decision-panel" id="decisionPanel">
+                    <div class="decision-title" style="color:${color}">${title}</div>
+                    <div class="decision-content">${content}</div>
+                    <div class="decision-actions">
+                        <button class="btn btn-success" onclick="resolveDecision(true)">✓ 允许</button>
+                        <button class="btn btn-danger" onclick="resolveDecision(false)">✗ 拒绝</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function hideDecision() {
+            document.getElementById('decisionContainer').innerHTML = '';
+        }
+
+        function setInputEnabled(enabled) {
+            document.getElementById('messageInput').disabled = !enabled;
+            document.getElementById('sendBtn').disabled = !enabled;
+        }
+
+        // ==================== API Functions ====================
+        function getHeaders() {
+            return {
+                'Authorization': 'Bearer ' + state.token,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        async function connect() {
+            state.serverUrl = document.getElementById('serverUrl').value.trim();
+            state.token = document.getElementById('token').value.trim();
+            state.projectPath = document.getElementById('projectPath').value.trim();
+            
+            if (!state.serverUrl || !state.token) {
+                addMessage('请填写服务器地址和 Token', 'system');
+                return;
+            }
+            
+            setStatus('connecting', '连接中...');
+            
+            try {
+                // Health check
+                const resp = await fetch(`${state.serverUrl}/health`, {
+                    headers: { 'Authorization': 'Bearer ' + state.token }
+                });
+                
+                if (!resp.ok) throw new Error('鉴权失败');
+                
+                const data = await resp.json();
+                addMessage(`✅ 服务器连接成功 (${data.sessions} 个活跃会话)`, 'system');
+                
+                // Create session
+                if (!state.sessionId) {
+                    await createSession();
+                }
+                
+                state.isConnected = true;
+                setStatus('connected', '已连接');
+                setInputEnabled(true);
+                toggleConfig();
+                
+                // Connect SSE
+                connectSSE();
+                
+            } catch (err) {
+                setStatus('', '连接失败');
+                addMessage('❌ 连接失败: ' + err.message, 'system');
+                console.error(err);
+            }
+        }
+
+        async function createSession() {
+            const resp = await fetch(`${state.serverUrl}/sessions`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({
+                    project: state.projectPath || 'd:\\\\work\\\\gairr'
+                })
+            });
+            
+            if (!resp.ok) throw new Error('创建会话失败');
+            
+            const data = await resp.json();
+            state.sessionId = data.sessionId;
+            addMessage(`会话已创建: ${state.sessionId}`, 'system');
+        }
+
+        function connectSSE() {
+            if (state.eventSource) state.eventSource.close();
+            
+            const url = `${state.serverUrl}/sessions/${state.sessionId}/events`;
+            // Use fetch-based SSE for auth header support
+            fetchSSE(url);
+        }
+
+        async function fetchSSE(url) {
+            try {
+                const resp = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + state.token }
+                });
+                
+                const reader = resp.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const event = JSON.parse(line.slice(6));
+                                handleEvent(event);
+                            } catch (e) {}
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('SSE error:', err);
+                setTimeout(() => connectSSE(), 3000);
+            }
+        }
+
+        function handleEvent(event) {
+            console.log('Event:', event);
+            
+            switch (event.type) {
+                case 'connected':
+                    addMessage('🔌 事件流已连接', 'system');
+                    break;
+                    
+                case 'text':
+                case 'message':
+                    hideThinking();
+                    addMessage(event.content || event.text || JSON.stringify(event), 'assistant');
+                    break;
+                    
+                case 'thinking':
+                    showThinking();
+                    break;
+                    
+                case 'tool_call':
+                    addMessage(`🔧 调用工具: ${event.tool || event.name}`, 'system');
+                    break;
+                    
+                case 'tool_result':
+                    addMessage(`✓ 工具执行完成`, 'system');
+                    break;
+                    
+                case 'decision':
+                case 'danger':
+                    state.pendingDecision = 'danger';
+                    showDecision('danger', event.content || '需要确认执行危险命令');
+                    break;
+                    
+                case 'plan':
+                    state.pendingDecision = 'plan';
+                    showDecision('plan', event.content || '需要审批计划');
+                    break;
+                    
+                case 'Finished':
+                    hideThinking();
+                    state.isBusy = false;
+                    setInputEnabled(true);
+                    addMessage('✅ 任务完成', 'system');
+                    break;
+                    
+                case 'Failed':
+                    hideThinking();
+                    state.isBusy = false;
+                    setInputEnabled(true);
+                    addMessage('❌ 任务失败', 'system');
+                    break;
+                    
+                default:
+                    // Try to display any content
+                    if (event.content || event.text || event.message) {
+                        addMessage(event.content || event.text || event.message, 'assistant');
+                    }
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text || state.isBusy) return;
+            
+            addMessage(text, 'user');
+            input.value = '';
+            state.isBusy = true;
+            setInputEnabled(false);
+            showThinking();
+            
+            try {
+                const resp = await fetch(`${state.serverUrl}/sessions/${state.sessionId}/messages`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ text })
+                });
+                
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    throw new Error(err.error || '发送失败');
+                }
+                
+                const data = await resp.json();
+                console.log('Task:', data);
+                
+            } catch (err) {
+                hideThinking();
+                state.isBusy = false;
+                setInputEnabled(true);
+                addMessage('❌ 发送失败: ' + err.message, 'system');
+            }
+        }
+
+        async function resolveDecision(allow) {
+            const type = state.pendingDecision || 'danger';
+            
+            try {
+                const resp = await fetch(`${state.serverUrl}/sessions/${state.sessionId}/decisions`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ type, allow })
+                });
+                
+                if (resp.ok) {
+                    addMessage(allow ? '✓ 已允许' : '✗ 已拒绝', 'system');
+                    hideDecision();
+                    state.pendingDecision = null;
+                }
+            } catch (err) {
+                addMessage('❌ 决策提交失败', 'system');
+            }
+        }
+
+        function saveConfig() {
+            localStorage.setItem('gairr_server', document.getElementById('serverUrl').value);
+            localStorage.setItem('gairr_token', document.getElementById('token').value);
+            localStorage.setItem('gairr_project', document.getElementById('projectPath').value);
+            addMessage('💾 配置已保存', 'system');
+        }
+
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
+</body>
+</html>
