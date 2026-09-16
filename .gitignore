@@ -1,6 +1,5 @@
 bin/
 obj/
-publish/
 back/
 .vs/
 *.user
@@ -59,3 +58,28 @@ unzip.cs
 _prev.cs
 _tmp_*
 %TEMP%/
+
+# --- publish 发布目录：仅排除运行时产物与跨平台 native 库（GAIRR.exe 走 LFS） ---
+publish/log/
+publish/data/
+publish/cli/runtimes/android/
+publish/cli/runtimes/browser-wasm/
+publish/cli/runtimes/ios/
+publish/cli/runtimes/linux-arm/
+publish/cli/runtimes/linux-arm64/
+publish/cli/runtimes/linux-armel/
+publish/cli/runtimes/linux-mips64/
+publish/cli/runtimes/linux-musl-arm/
+publish/cli/runtimes/linux-musl-arm64/
+publish/cli/runtimes/linux-musl-x64/
+publish/cli/runtimes/linux-ppc64le/
+publish/cli/runtimes/linux-s390x/
+publish/cli/runtimes/linux-x64/
+publish/cli/runtimes/linux-x86/
+publish/cli/runtimes/maccatalyst-arm64/
+publish/cli/runtimes/maccatalyst-x64/
+publish/cli/runtimes/osx-arm64/
+publish/cli/runtimes/osx-x64/
+publish/cli/runtimes/win-arm/
+publish/cli/runtimes/win-arm64/
+publish/cli/runtimes/win-x86/

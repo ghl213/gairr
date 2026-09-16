@@ -1,0 +1,20 @@
+{
+  "plugins": [
+    {
+      "name": "hello-mkt",
+      "desc": "市场示例插件：返回问候语，用于验证市场安装链路",
+      "version": "1.0.0",
+      "url": "packages/hello-mkt.zip",
+      "sha256": "536a0ac2e12292fd4b6cb353cf4ef3d514bc586a1a4de8b0651d205f38c5785f"
+    }
+  ],
+  "skills": [
+    {
+      "name": "market-demo",
+      "desc": "市场示例技能：演示市场安装技能的加载与触发",
+      "version": "1.0.0",
+      "url": "packages/market-demo.zip",
+      "sha256": "fde6cc6354e68bbbfc1cfb7aae92c94bae288604be67c4474541defa185931cf"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "software-engineer",
+  "displayName": "软件工程师",
+  "icon": "\uD83D\uDC64",
+  "description": "默认示例角色：负责需求到代码的落地执行。本角色为包目录形态（roles/software-engineer/，目录名=name），复制整个目录即完整分发角色；提示词/流程默认复用共享池，若需私有可在此目录下建 prompts/、flows/ 覆盖同名文件。",
+  "defaultMode": "agile",
+  "order": 100,
+  "modes": [
+    {
+      "name": "agile",
+      "displayName": "敏捷模式",
+      "icon": "⚡",
+      "description": "敏捷模式：语义直达、够用即停、免清单；提示词文件 prompts/agent-agile.md（共享池）",
+      "promptFile": "agent-agile.md",
+      "flowName": null
+    },
+    {
+      "name": "deep",
+      "displayName": "严谨模式",
+      "icon": "\uD83D\uDD2C",
+      "description": "严谨模式：四层检索、完整验证、防偏移回读；提示词文件 prompts/agent-deep.md（共享池）",
+      "promptFile": "agent-deep.md",
+      "flowName": null
+    },
+    {
+      "name": "dev-basic",
+      "displayName": "流程模式",
+      "icon": "\uD83D\uDCCB",
+      "description": "按定位→修改→编译验证→收尾汇报的线性流程执行（步骤定义在 flows/dev-basic.json，共享池）",
+      "promptFile": "agent-deep.md",
+      "flowName": "dev-basic"
+    }
+  ]
+}

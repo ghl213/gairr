@@ -1,0 +1,24 @@
+{
+  "name": "dev-basic",
+  "displayName": "流程模式",
+  "description": "按定位→修改→编译验证→收尾汇报的完整流程执行，可修改文件",
+  "steps": [
+    {
+      "step": "search",
+      "message": "定位与任务相关的代码（类/方法/文件），给出要改的位置"
+    },
+    {
+      "step": "edit",
+      "message": "按任务目标实现修改（改前 Read 确认现状）"
+    },
+    {
+      "step": "build",
+      "query": "dotnet build -v q",
+      "message": "编译验证整个解决方案"
+    },
+    {
+      "step": "ask",
+      "message": "总结修改内容与遗留问题"
+    }
+  ]
+}
